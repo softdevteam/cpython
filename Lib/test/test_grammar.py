@@ -65,6 +65,15 @@ class TokenTests(unittest.TestCase):
         else:
             self.fail('Weird maxint value %r' % maxint)
 
+        if sys.py3kwarning:
+            with warnings.catch_warnings():
+                warnings.filterwarnings('error', category=Py3xWarning)
+                with self.assertRaises(Py3xWarning) as oct:
+                    compile('032', '<test string>', 'eval')
+                self.assertIn("octal literals are not supported in 3.x;\n" 
+                              "drop the leading 0",
+                              str(oct.exception))
+
     def test_long_integers(self):
         x = 0L
         x = 0l

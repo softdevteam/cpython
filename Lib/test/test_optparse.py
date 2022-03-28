@@ -23,6 +23,7 @@ from optparse import make_option, Option, \
      BadOptionError, OptionValueError, Values
 from optparse import _match_abbrev
 from optparse import _parse_num
+from test.test_support import run_unittest, check_py3k_warnings
 
 retype = type(re.compile(''))
 
