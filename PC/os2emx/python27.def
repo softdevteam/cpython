@@ -819,6 +819,7 @@ EXPORTS
   "PyExc_DeprecationWarning"
   "PyExc_PendingDeprecationWarning"
   "PyExc_SyntaxWarning"
+  "PyExc_Py3xWarning"
   "PyExc_RuntimeWarning"
   "PyExc_FutureWarning"
   "PyExc_ImportWarning"

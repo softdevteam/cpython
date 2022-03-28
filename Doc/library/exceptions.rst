@@ -530,6 +530,10 @@ module for more information.
 
    .. versionadded:: 2.6
 
+.. exception:: Py3xWarning
+
+   Base class for warnings about 3.x compatibility.
+
 
 Exception hierarchy
 -------------------

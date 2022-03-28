@@ -36,7 +36,7 @@ static expr_ty ast_for_testlist_comp(struct compiling *, const node *);
 /* Note different signature for ast_for_call */
 static expr_ty ast_for_call(struct compiling *, const node *, expr_ty);
 
-static PyObject *parsenumber(struct compiling *, const char *);
+static PyObject *parsenumber(struct compiling *, const node *n, const char *);
 static PyObject *parsestr(struct compiling *, const node *n, const char *);
 static PyObject *parsestrplus(struct compiling *, const node *n);
 
@@ -124,6 +124,19 @@ ast_warn(struct compiling *c, const node *n, char *msg)
                            NULL, NULL) < 0) {
         /* if -Werr, change it to a SyntaxError */
         if (PyErr_Occurred() && PyErr_ExceptionMatches(PyExc_SyntaxWarning))
+            ast_error(n, msg);
+        return 0;
+    }
+    return 1;
+}
+
+static int
+ast_3x_warn(struct compiling *c, const node *n, char *msg)
+{
+    if (PyErr_WarnExplicit(PyExc_Py3xWarning, msg, c->c_filename, LINENO(n),
+                           NULL, NULL) < 0) {
+        /* if -Werr, change it to a SyntaxError */
+        if (PyErr_Occurred() && PyErr_ExceptionMatches(PyExc_Py3xWarning))
             ast_error(n, msg);
         return 0;
     }
@@ -1403,7 +1416,7 @@ ast_for_atom(struct compiling *c, const node *n)
         return Str(str, LINENO(n), n->n_col_offset, c->c_arena);
     }
     case NUMBER: {
-        PyObject *pynum = parsenumber(c, STR(ch));
+        PyObject *pynum = parsenumber(c, n, STR(ch));
         if (!pynum)
             return NULL;
 
@@ -1751,7 +1764,7 @@ ast_for_factor(struct compiling *c, const node *n)
             return NULL;
         s[0] = '-';
         strcpy(s + 1, STR(pnum));
-        pynum = parsenumber(c, s);
+        pynum = parsenumber(c, n, s);
         PyObject_FREE(s);
         if (!pynum)
             return NULL;
@@ -3324,7 +3337,7 @@ ast_for_stmt(struct compiling *c, const node *n)
 }
 
 static PyObject *
-parsenumber(struct compiling *c, const char *s)
+parsenumber(struct compiling *c, const node *n, const char *s)
 {
         const char *end;
         long x;
@@ -3340,8 +3353,14 @@ parsenumber(struct compiling *c, const char *s)
 #ifndef WITHOUT_COMPLEX
         imflag = *end == 'j' || *end == 'J';
 #endif
-        if (*end == 'l' || *end == 'L')
+        if (*end == 'l' || *end == 'L') {
+                if (Py_Py3kWarningFlag &&
+                    !ast_3x_warn(c, n, "the L suffix is not supported in 3.x; simply drop the suffix, \n" 
+                                 "or accept the auto fixer modifications")) {
+                        return NULL;
+                }
                 return PyLong_FromString((char *)s, (char **)0, 0);
+        }
         x = PyOS_strtol((char *)s, (char **)&end, 0);
         if (*end == '\0') {
                 if (errno != 0)

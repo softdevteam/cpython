@@ -45,6 +45,7 @@ BaseException
            +-- SyntaxWarning
            +-- UserWarning
            +-- FutureWarning
+           +-- Py3xWarning
 	   +-- ImportWarning
 	   +-- UnicodeWarning
 	   +-- BytesWarning
