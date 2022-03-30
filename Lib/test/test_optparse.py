@@ -23,6 +23,7 @@ from optparse import make_option, Option, \
      BadOptionError, OptionValueError, Values
 from optparse import _match_abbrev
 from optparse import _parse_num
+from test.test_support import run_unittest, check_py3k_warnings
 
 retype = type(re.compile(''))
 
@@ -1653,6 +1654,16 @@ class TestParseNumber(BaseTest):
                              "option -l: invalid long integer value: '0b0123'")
         self.assertParseFail(["-l", "0x12x"],
                              "option -l: invalid long integer value: '0x12x'")
+
+    def test_parse_num_3k_warnings(self):
+        expected = 'the L suffix is not supported in 3.x; simply drop the suffix, \
+                    or accept the auto fixer modifications'
+        with check_py3k_warnings((expected, Py3xWarning)):
+            x = 10L
+            y = 8L
+            z = x + y
+            a = x * y
+            b = x - y
 
 
 def test_main():

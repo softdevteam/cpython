@@ -1433,6 +1433,14 @@ tok_get(register struct tok_state *tok, char **p_start, char **p_end)
     /* Number */
     if (isdigit(c)) {
         if (c == '0') {
+            if (Py_Py3kWarningFlag) {
+                if (PyErr_WarnExplicit(PyExc_Py3xWarning,
+                                    "octal literals are not supported in 3.x;\n" 
+                                    "drop the leading 0",
+                                    tok->filename, tok->lineno, NULL, NULL)) {
+                    return NULL;
+                }
+            }
             /* Hex, octal or binary -- maybe. */
             c = tok_nextc(tok);
             if (c == '.')

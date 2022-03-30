@@ -690,6 +690,7 @@ the variables:
    single: PyExc_SyntaxWarning
    single: PyExc_UnicodeWarning
    single: PyExc_UserWarning
+   single: PyExc_Py3xWarning
 
 +------------------------------------------+---------------------------------+----------+
 | C Name                                   | Python Name                     | Notes    |
@@ -713,6 +714,8 @@ the variables:
 | :c:data:`PyExc_UnicodeWarning`           | :exc:`UnicodeWarning`           |          |
 +------------------------------------------+---------------------------------+----------+
 | :c:data:`PyExc_UserWarning`              | :exc:`UserWarning`              |          |
++------------------------------------------+---------------------------------+----------+
+| :c:data:`PyExc_3xWarning`                | :exc:`Py3xWarning`                |          |
 +------------------------------------------+---------------------------------+----------+
 
 Notes:
