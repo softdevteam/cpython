@@ -2294,6 +2294,11 @@ ast_for_print_stmt(struct compiling *c, const node *n)
     int i, j, values_count, start = 1;
 
     REQ(n, print_stmt);
+    if (Py_Py3kWarningFlag && TYPE(CHILD(n, 1)) != LPAR) {
+        if (!ast_warn(c, n,
+            "Missing parentheses in call to 'print' is not supported in 3.x"))
+            return NULL;              
+    }
     if (NCH(n) >= 2 && TYPE(CHILD(n, 1)) == RIGHTSHIFT) {
         dest = ast_for_expr(c, CHILD(n, 2));
         if (!dest)
