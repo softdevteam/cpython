@@ -453,19 +453,16 @@ hello world
         check_syntax_error(self, 'print ,')
         check_syntax_error(self, 'print >> x,')
 
-        with check_py3k_warnings(("Missing parentheses in call to 'print' is not supported", SyntaxWarning)):
+        with check_py3k_warnings(("print must be called as a function, not a statement in 3.x; You can"
+                                  "fix this now by using parentheses for arguments to 'print' ", SyntaxWarning)):
             print 1, 2, 3
             print 1, 2, 3,
             print
-            print 0 or 1, 0 or 1,
-            print 0 or 1
 
             # 'print' '>>' test ','
             print >> sys.stdout, 1, 2, 3
             print >> sys.stdout, 1, 2, 3,
             print >> sys.stdout
-            print >> sys.stdout, 0 or 1, 0 or 1,
-            print >> sys.stdout, 0 or 1
 
     def test_del_stmt(self):
         # 'del' exprlist
