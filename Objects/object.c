@@ -820,6 +820,12 @@ do_cmp(PyObject *v, PyObject *w)
     int c;
     cmpfunc f;
 
+    if (Py_Py3kWarningFlag &&
+        PyErr_WarnEx(PyExc_Py3xWarning, "the cmp method is not supported in 3.x;"
+        "use the new rich comparison functions", 1) < 0) {
+        return 0;
+    }
+
     if (v->ob_type == w->ob_type
         && (f = v->ob_type->tp_compare) != NULL) {
         c = (*f)(v, w);
