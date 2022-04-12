@@ -1433,14 +1433,6 @@ tok_get(register struct tok_state *tok, char **p_start, char **p_end)
     /* Number */
     if (isdigit(c)) {
         if (c == '0') {
-            if (Py_Py3kWarningFlag) {
-                if (PyErr_WarnExplicit(PyExc_Py3xWarning,
-                                    "octal literals are not supported in 3.x;\n" 
-                                    "drop the leading 0",
-                                    tok->filename, tok->lineno, NULL, NULL)) {
-                    return NULL;
-                }
-            }
             /* Hex, octal or binary -- maybe. */
             c = tok_nextc(tok);
             if (c == '.')
@@ -1449,6 +1441,15 @@ tok_get(register struct tok_state *tok, char **p_start, char **p_end)
             if (c == 'j' || c == 'J')
                 goto imaginary;
 #endif
+            if (c != 'o' || c != 'O') {
+                char buf[100];
+                if (Py_Py3kWarningFlag) {
+                    if (PyErr_WarnExplicit_WithFix(PyExc_Py3xWarning, "using just a '0' prefix for octal literals is not supported in 3.x", 
+                                                   "use the '0o' prefix for octal integers, if you intended the integer to be decimal", tok->filename, tok->lineno, NULL, NULL)) {
+                        return NULL;
+                    }
+                }
+            }
             if (c == 'x' || c == 'X') {
 
                 /* Hex */

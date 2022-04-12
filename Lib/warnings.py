@@ -7,8 +7,9 @@ import linecache
 import sys
 import types
 
-__all__ = ["warn", "warn_explicit", "showwarning",
-           "formatwarning", "filterwarnings", "simplefilter",
+__all__ = ["warn", "warn_explicit", "warn_explicit_with_fix",
+           "showwarning", "showwarningwithfix", "formatwarning",
+           "formatwarningwithfix", "filterwarnings", "simplefilter",
            "resetwarnings", "catch_warnings"]
 
 
@@ -37,6 +38,21 @@ def _show_warning(message, category, filename, lineno, file=None, line=None):
 # triggered.
 showwarning = _show_warning
 
+def _show_warning_with_fix(message, fix, category, filename, lineno, file=None, line=None):
+    """Hook to write a warning to a file; replace if you like."""
+    if file is None:
+        file = sys.stderr
+        if file is None:
+            # sys.stderr is None - warnings get lost
+            return
+    try:
+        file.write(formatwarningwithfix(message, fix, category, filename, lineno, line))
+    except (IOError, UnicodeError):
+        pass # the file (probably stderr) is invalid - this warning gets lost.
+# Keep a working version around in case the deprecation of the old API is
+# triggered.
+showwarningwithfix = _show_warning_with_fix
+
 def formatwarning(message, category, filename, lineno, line=None):
     """Function to format a warning the standard way."""
     try:
@@ -48,6 +64,34 @@ def formatwarning(message, category, filename, lineno, line=None):
     except UnicodeEncodeError:
         pass
     s =  "%s: %s: %s\n" % (lineno, category.__name__, message)
+    line = linecache.getline(filename, lineno) if line is None else line
+    if line:
+        line = line.strip()
+        if isinstance(s, unicodetype) and isinstance(line, str):
+            line = unicode(line, 'latin1')
+        s += "  %s\n" % line
+    if isinstance(s, unicodetype) and isinstance(filename, str):
+        enc = sys.getfilesystemencoding()
+        if enc:
+            try:
+                filename = unicode(filename, enc)
+            except UnicodeDecodeError:
+                pass
+    s = "%s:%s" % (filename, s)
+    return s
+
+def formatwarningwithfix(message, fix, category, filename, lineno, line=None):
+    """Function to format a warning the standard way with a fix."""
+    try:
+        unicodetype = unicode
+    except NameError:
+        unicodetype = ()
+    try:
+        message = str(message)
+        fix = str(fix)
+    except UnicodeEncodeError:
+        pass
+    s =  "%s: %s: %s: %s\n" % (lineno, category.__name__, message, fix)
     line = linecache.getline(filename, lineno) if line is None else line
     if line:
         line = line.strip()
@@ -299,6 +343,71 @@ def warn_explicit(message, category, filename, lineno,
     # Print message and context
     showwarning(message, category, filename, lineno)
 
+def warn_explicit_with_fix(message, fix, category, filename, lineno,
+                  module=None, registry=None, module_globals=None):
+    lineno = int(lineno)
+    if module is None:
+        module = filename or "<unknown>"
+        if module[-3:].lower() == ".py":
+            module = module[:-3] # XXX What about leading pathname?
+    if registry is None:
+        registry = {}
+    if isinstance(message, Warning):
+        text = str(message)
+        category = message.__class__
+    else:
+        text = message
+        message = category(message)
+    key = (text, category, lineno)
+    # Quick test for common case
+    if registry.get(key):
+        return
+    # Search the filters
+    for item in filters:
+        action, msg, cat, mod, ln = item
+        if ((msg is None or msg.match(text)) and
+            issubclass(category, cat) and
+            (mod is None or mod.match(module)) and
+            (ln == 0 or lineno == ln)):
+            break
+    else:
+        action = defaultaction
+    # Early exit actions
+    if action == "ignore":
+        registry[key] = 1
+        return
+
+    # Prime the linecache for formatting, in case the
+    # "file" is actually in a zipfile or something.
+    linecache.getlines(filename, module_globals)
+
+    if action == "error":
+        raise message
+    # Other actions
+    if action == "once":
+        registry[key] = 1
+        oncekey = (text, category)
+        if onceregistry.get(oncekey):
+            return
+        onceregistry[oncekey] = 1
+    elif action == "always":
+        pass
+    elif action == "module":
+        registry[key] = 1
+        altkey = (text, category, 0)
+        if registry.get(altkey):
+            return
+        registry[altkey] = 1
+    elif action == "default":
+        registry[key] = 1
+    else:
+        # Unrecognized actions are errors
+        raise RuntimeError(
+              "Unrecognized action (%r) in warnings.filters:\n %s" %
+              (action, item))
+    # Print message and context
+    showwarningwithfix(message, fix, category, filename, lineno)
+
 
 class WarningMessage(object):
 
@@ -395,7 +504,7 @@ class catch_warnings(object):
 _warnings_defaults = False
 try:
     from _warnings import (filters, default_action, once_registry,
-                            warn, warn_explicit)
+                            warn, warn_explicit, warn_explicit_with_fix)
     defaultaction = default_action
     onceregistry = once_registry
     _warnings_defaults = True

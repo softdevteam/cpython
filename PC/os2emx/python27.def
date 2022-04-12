@@ -914,6 +914,7 @@ EXPORTS
   "_PyErr_BadInternalCall"
   "PyErr_Warn"
   "PyErr_WarnExplicit"
+  "PyErr_WarnExplicit_WithFix"
 
 ; From python27_s.lib(frozen)
   "PyImport_FrozenModules"
