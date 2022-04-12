@@ -818,6 +818,23 @@ do_warn(PyObject *message, PyObject *category, Py_ssize_t stack_level)
 }
 
 static PyObject *
+do_warn_with_fix(PyObject *message, PyObject *fix, PyObject *category, Py_ssize_t stack_level)
+{
+    PyObject *filename, *module, *registry, *res;
+    int lineno;
+
+    if (!setup_context(stack_level, &filename, &lineno, &module, &registry))
+        return NULL;
+
+    res = warn_explicit_with_fix(category, message, fix, filename, lineno, module, registry,
+                        NULL);
+    Py_DECREF(filename);
+    Py_DECREF(registry);
+    Py_DECREF(module);
+    return res;
+}
+
+static PyObject *
 warnings_warn(PyObject *self, PyObject *args, PyObject *kwds)
 {
     static char *kw_list[] = { "message", "category", "stacklevel", 0 };
@@ -1029,8 +1046,28 @@ PyErr_WarnEx(PyObject *category, const char *text, Py_ssize_t stack_level)
     return 0;
 }
 
-/* PyErr_Warn is only for backwards compatibility and will be removed.
-   Use PyErr_WarnEx instead. */
+/* Function to issue a warning message; may raise an exception. */
+int
+PyErr_WarnEx_WithFix(PyObject *category, const char *text, const char *fix_txt, Py_ssize_t stack_level)
+{
+    PyObject *res;
+    PyObject *message = PyString_FromString(text);
+    PyObject *fix = PyString_FromString(fix_txt);
+    if (message == NULL)
+        return -1;
+
+    if (category == NULL)
+        category = PyExc_RuntimeWarning;
+
+    res = do_warn_with_fix(message, fix, category, stack_level);
+    Py_DECREF(message);
+    Py_DECREF(fix);
+    if (res == NULL)
+        return -1;
+    Py_DECREF(res);
+
+    return 0;
+}
 
 #undef PyErr_Warn
 

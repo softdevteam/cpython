@@ -279,8 +279,8 @@ def test_main(verbose=None):
         test_support.run_unittest(*test_classes)
 
     with test_support.check_py3k_warnings(
-            ("the cmp method is not supported in 3.x;"
-             "use the new rich comparison functions", Py3xWarning)):
+            ("the cmp method is not supported in 3.x"
+             "implement the function to a utility library", Py3xWarning)):
         test_support.run_unittest(*test_classes)
 
         # verify reference counting
