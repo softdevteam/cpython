@@ -458,6 +458,23 @@ hello world
         check_syntax_error(self, 'print ,')
         check_syntax_error(self, 'print >> x,')
 
+    def test_print_py3k_warnings(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                print 1, 2, 3
+                print 1, 2, 3,
+                print
+
+                # 'print' '>>' test ','
+                print >> sys.stdout, 1, 2, 3
+                print >> sys.stdout, 1, 2, 3,
+                print >> sys.stdout
+                for warning in w:
+                    self.assertTrue(Py3xWarning is w.category)
+                    self.assertEqual(str(w.message), "print must be called as a function, not a statement in 3.x", 
+                                     "You can fix this now by using parentheses for arguments to 'print'")
+
     def test_del_stmt(self):
         # 'del' exprlist
         abc = [1,2,3]

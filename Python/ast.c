@@ -2294,6 +2294,12 @@ ast_for_print_stmt(struct compiling *c, const node *n)
     int i, j, values_count, start = 1;
 
     REQ(n, print_stmt);
+    if (Py_Py3kWarningFlag && TYPE(CHILD(n, 1)) != LPAR) {
+        if (!ast_3x_warn(c, n,
+            "print must be called as a function, not a statement in 3.x", 
+            "You can fix this now by using parentheses for arguments to 'print'"))
+            return NULL;              
+    }
     if (NCH(n) >= 2 && TYPE(CHILD(n, 1)) == RIGHTSHIFT) {
         dest = ast_for_expr(c, CHILD(n, 2));
         if (!dest)
