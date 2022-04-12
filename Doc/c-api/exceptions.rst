@@ -319,6 +319,12 @@ is a separate error indicator for each thread.
    and *registry* arguments may be set to *NULL* to get the default effect
    described there.
 
+.. c:function:: int PyErr_WarnExplicit_WithFix(PyObject *category, const char *message, const char *fix, const char *filename, int lineno, const char *module, PyObject *registry)
+
+   Issue a warning message and a potential fix.  This warning is the 
+   same as `PyErr_WarnExplicit` but adds a *fix* argument to allow 
+   for `Py3xWarning` warnings to suggest potential fixes for Python
+   3.x incompatible code.
 
 .. c:function:: int PyErr_WarnPy3k(char *message, int stacklevel)
 
@@ -715,7 +721,7 @@ the variables:
 +------------------------------------------+---------------------------------+----------+
 | :c:data:`PyExc_UserWarning`              | :exc:`UserWarning`              |          |
 +------------------------------------------+---------------------------------+----------+
-| :c:data:`PyExc_3xWarning`                | :exc:`Py3xWarning`                |          |
+| :c:data:`PyExc_3xWarning`                | :exc:`Py3xWarning`              |          |
 +------------------------------------------+---------------------------------+----------+
 
 Notes:

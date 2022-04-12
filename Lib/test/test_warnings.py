@@ -70,7 +70,8 @@ class PublicAPITests(BaseTest):
 
     def test_module_all_attribute(self):
         self.assertTrue(hasattr(self.module, '__all__'))
-        target_api = ["warn", "warn_explicit", "showwarning",
+        target_api = ["warn", "warn_explicit", "warn_explicit_with_fix"
+                      "showwarning", "showwarningwithfix", "formatwarningwithfix",
                       "formatwarning", "filterwarnings", "simplefilter",
                       "resetwarnings", "catch_warnings"]
         self.assertSetEqual(set(self.module.__all__),
@@ -161,6 +162,23 @@ class FilterTests(object):
                                     42)
             self.assertEqual(len(w), 0)
 
+    def test_once_with_fix(self):
+        with original_warnings.catch_warnings(record=True,
+                module=self.module) as w:
+            self.module.resetwarnings()
+            self.module.filterwarnings("once", category=UserWarning)
+            message = UserWarning("FilterTests.test_once")
+            fix = 'some fix'
+            self.module.warn_explicit_with_fix(message, fix, UserWarning, "test_warnings.py",
+                                    42)
+            del w[:]
+            self.module.warn_explicit_with_fix(message, fix, UserWarning, "test_warnings.py",
+                                    13)
+            self.assertEqual(len(w), 0)
+            self.module.warn_explicit_with_fix(message, fix, UserWarning, "test_warnings2.py",
+                                    42)
+            self.assertEqual(len(w), 0)
+
     def test_inheritance(self):
         with original_warnings.catch_warnings(module=self.module) as w:
             self.module.resetwarnings()
@@ -230,7 +248,8 @@ class PyFilterTests(BaseTest, FilterTests):
 
 class WarnTests(unittest.TestCase):
 
-    """Test warnings.warn() and warnings.warn_explicit()."""
+    """Test warnings.warn(), warnings.warn_explicit()
+    and warnings.warn_explicit_with_fix()."""
 
     def test_message(self):
         with original_warnings.catch_warnings(record=True,
@@ -644,6 +663,25 @@ class WarningsDisplayTests(unittest.TestCase):
         self.assertEqual(expect, self.module.formatwarning(message,
                                     category, file_name, line_num, file_line))
 
+    def test_formatwarningwithfix(self):
+        message = "msg"
+        fix = 'fix'
+        category = Warning
+        file_name = os.path.splitext(warning_tests.__file__)[0] + '.py'
+        line_num = 3
+        file_line = linecache.getline(file_name, line_num).strip()
+        format = "%s:%s: %s: %s: %s\n  %s\n"
+        expect = format % (file_name, line_num, category.__name__, message,
+                            fix, file_line)
+        self.assertEqual(expect, self.module.formatwarningwithfix(message, fix,
+                                                category, file_name, line_num))
+        # Test the 'line' argument.
+        file_line += " for the win!"
+        expect = format % (file_name, line_num, category.__name__, message,
+                            fix, file_line)
+        self.assertEqual(expect, self.module.formatwarningwithfix(message, fix,
+                                    category, file_name, line_num, file_line))
+
     @test_support.requires_unicode
     def test_formatwarning_unicode_msg(self):
         message = u"msg"
@@ -719,6 +757,28 @@ class WarningsDisplayTests(unittest.TestCase):
                                             line_num, expected_file_line)
         file_object = StringIO.StringIO()
         self.module.showwarning(message, category, file_name, line_num,
+                                file_object, expected_file_line)
+        self.assertEqual(expect, file_object.getvalue())
+
+    def test_showwarningwithfix(self):
+        file_name = os.path.splitext(warning_tests.__file__)[0] + '.py'
+        line_num = 3
+        expected_file_line = linecache.getline(file_name, line_num).strip()
+        message = 'msg'
+        fix = 'fix'
+        category = Warning
+        file_object = StringIO.StringIO()
+        expect = self.module.formatwarningwithfix(message, fix, category, file_name,
+                                            line_num)
+        self.module.showwarningwithfix(message, fix, category, file_name, line_num,
+                                file_object)
+        self.assertEqual(file_object.getvalue(), expect)
+        # Test 'line' argument.
+        expected_file_line += "for the win!"
+        expect = self.module.formatwarningwithfix(message, fix, category, file_name,
+                                            line_num, expected_file_line)
+        file_object = StringIO.StringIO()
+        self.module.showwarningwithfix(message, fix, category, file_name, line_num,
                                 file_object, expected_file_line)
         self.assertEqual(expect, file_object.getvalue())
 

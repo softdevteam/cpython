@@ -95,7 +95,7 @@ following warnings category classes are currently defined:
 |                                  | bytes and bytearray.                          |
 +----------------------------------+-----------------------------------------------+
 | :exc:`Py3xWarning`               | Base class for warnings about 3.x             |
-                                   | compatibility                                 |                         |
+                                   | compatibility.                                 |                         |
 +----------------------------------+-----------------------------------------------+
 
 While these are technically built-in exceptions, they are documented here,
