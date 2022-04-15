@@ -860,6 +860,13 @@ PyObject_Compare(PyObject *v, PyObject *w)
 {
     int result;
 
+    if (Py_Py3kWarningFlag &&
+        PyErr_WarnEx_WithFix(PyExc_Py3xWarning, "the cmp method is not supported in 3.x",
+        "you can either provide your own alternative or use a third party library with a "
+         "backwards compatible fix", 1) < 0) {
+        return 0;
+    }
+
     if (v == NULL || w == NULL) {
         PyErr_BadInternalCall();
         return -1;
