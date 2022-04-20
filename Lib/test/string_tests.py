@@ -1081,6 +1081,24 @@ class MixinStrUnicodeUserStringTest(NonStringModuleTest):
         # but either raises a MemoryError, or succeeds (if you have 54TiB)
         #self.checkraises(OverflowError, 10000*'abc', '__mul__', 2000000000)
 
+    def test_py3x_warnings_isinstance(self):
+        with test_support.check_py3k_warnings(("the basestring type is not supported in 3.x: "
+                                               "import a third party library like six and use"
+                                               "a compatible type like string_types", Py3xWarning)):
+            isinstance(u"fix", basestring)
+            isinstance(b"fix", basestring)
+            isinstance("fix", basestring)
+
+    def test_py3x_warnings_join(self):
+        with test_support.check_py3k_warnings(("mixed bytes, str and unicode operands cannot "
+                                               "be used in string concatenation in Python 3.x: "
+                                               "convert the operand(s) so that they are the same type.", Py3xWarning)):
+            x = 'foo'
+            y = b'foo'
+            z = x + y
+            b = y + x
+            v = x.__add__(y)
+
     def test_join(self):
         # join now works with any sequence type
         # moved here, because the argument order is
