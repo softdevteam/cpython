@@ -1229,6 +1229,27 @@ hello world
         self.assertFalse((False is 2) is 3)
         self.assertFalse(False is 2 is 3)
 
+    def test_py3x_unicode_warnings_u(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                self.assertEqual(u'foo', u'foo')
+                for warning in w:
+                    self.assertTrue(Py3xWarning is w.category)
+                    self.assertEqual(str(w.message), "the unicode type is not supported in 3.x: " \
+                                     "use native strings for compatibility or " \
+                                     "a 'u' or 'b' prefix if a native string is not required")
+
+    def test_py3x_unicode_warnings_ur(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                self.assertEqual(ur'foo', u'foo')
+                for warning in w:
+                    self.assertTrue(Py3xWarning is w.category)
+                    self.assertEqual(str(w.message), "the 'ur' prefix in string literals is not supported in 3.x: ", 
+                                     "use a 'u' and two backslashes for a literal backslash")
+
 
 def test_main():
     run_unittest(TokenTests, GrammarTests)

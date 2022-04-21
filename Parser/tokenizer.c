@@ -1390,8 +1390,27 @@ tok_get(register struct tok_state *tok, char **p_start, char **p_end)
         case 'u':
         case 'U':
             c = tok_nextc(tok);
-            if (c == 'r' || c == 'R')
+            if (c == 'r' || c == 'R') {
+                if (Py_Py3kWarningFlag) {
+                    if (PyErr_WarnExplicit_WithFix(PyExc_Py3xWarning, "the 'ur' prefix in string literals is not supported in 3.x", 
+                                                   "use a 'u' and two backslashes for a literal backslash", tok->filename, tok->lineno, 
+                                                   NULL, NULL)) {
+                        return NULL;
+                    }
+                }
                 c = tok_nextc(tok);
+            }
+            else {
+                if (Py_Py3kWarningFlag) {
+                    if (PyErr_WarnExplicit_WithFix(PyExc_Py3xWarning, "the unicode type is not supported in 3.x", 
+                                                   "use native strings for compatibility or "
+                                                   "a 'u' or 'b' prefix if a native string is not required", 
+                                                   tok->filename, tok->lineno, NULL, NULL)) {
+                        return NULL;
+                    }
+                }
+
+            }
             if (c == '"' || c == '\'')
                 goto letter_quote;
             break;

@@ -1029,6 +1029,17 @@ string_concat(register PyStringObject *a, register PyObject *bb)
 {
     register Py_ssize_t size;
     register PyStringObject *op;
+    if (a->ob_type != bb->ob_type) {
+        char msgbuf[256];
+        sprintf(msgbuf, "the first string is '%.200s' while the second is '%.200s': "\
+                "mixed bytes, str and unicode operands cannot be used in string concatenation in Python 3.x", 
+                Py_TYPE(a)->tp_name, Py_TYPE(bb)->tp_name);
+        char *fix = "convert the operand(s) so that they are the same type.";
+        if (Py_Py3kWarningFlag &&
+            PyErr_WarnEx_WithFix(PyExc_Py3xWarning, msgbuf, fix, 1) < 0) {
+            return NULL;
+        }
+    }
     if (!PyString_Check(bb)) {
 #ifdef Py_USING_UNICODE
         if (PyUnicode_Check(bb))
