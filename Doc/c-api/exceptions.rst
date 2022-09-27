@@ -333,6 +333,11 @@ is a separate error indicator for each thread.
 
    .. versionadded:: 2.6
 
+.. c:function:: int PyErr_WarnPy3k_WithFix(char *message, char *fix, int stacklevel)
+
+   Issue a :exc:`DeprecationWarning` with the given *message* and *stacklevel*
+   if the :c:data:`Py_Py3kWarningFlag` flag is enabled.
+
 
 .. c:function:: int PyErr_CheckSignals()
 
