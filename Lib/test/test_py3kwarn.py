@@ -247,6 +247,20 @@ class TestPy3KWarnings(unittest.TestCase):
             with check_py3k_warnings() as w:
                 self.assertWarning(f.xreadlines(), w, expected)
 
+    def test_file_open(self):
+        expected = ("The builtin 'file()'/'open()' function is not supported in 3.x, "
+                       "use the 'io.open()' function instead with the encoding keyword argument")
+        with open(__file__) as f:
+            with check_py3k_warnings() as w:
+                self.assertWarning(f.read(), w, expected)
+
+    def test_file(self):
+        expected = ("The builtin 'file()'/'open()' function is not supported in 3.x, "
+                    "use the 'io.open()' function instead with the encoding keyword argument")
+        with file(__file__) as f:
+            with check_py3k_warnings() as w:
+                self.assertWarning(f.read(), w, expected)
+
     def test_hash_inheritance(self):
         with check_py3k_warnings() as w:
             # With object as the base class
