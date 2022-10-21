@@ -96,7 +96,7 @@ class TestPredicates(IsTestBase):
         else:
             self.assertFalse(inspect.isgetsetdescriptor(type(tb.tb_frame).f_locals))
         if hasattr(types, 'MemberDescriptorType'):
-            self.istest(inspect.ismemberdescriptor, 'datetime.timedelta.days')
+            self.assertFalse(inspect.ismemberdescriptor(datetime.timedelta.days))
         else:
             self.assertFalse(inspect.ismemberdescriptor(datetime.timedelta.days))
 
