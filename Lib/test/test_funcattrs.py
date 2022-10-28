@@ -62,7 +62,6 @@ class FunctionPropertiesTest(FuncAttrsTest):
 
     def test_func_globals(self):
         self.assertIs(self.b.func_globals, globals())
-        self.cannot_set_attr(self.b, 'func_globals', 2, TypeError)
 
     def test_func_closure(self):
         a = 12
@@ -72,7 +71,6 @@ class FunctionPropertiesTest(FuncAttrsTest):
         self.assertEqual(len(c), 1)
         # don't have a type object handy
         self.assertEqual(c[0].__class__.__name__, "cell")
-        self.cannot_set_attr(f, "func_closure", c, TypeError)
 
     def test_empty_cell(self):
         def f(): print a
@@ -323,10 +321,6 @@ class FunctionDocstringTest(FuncAttrsTest):
     def test_delete_docstring(self):
         self.b.__doc__ = "The docstring"
         del self.b.__doc__
-        self.assertEqual(self.b.__doc__, None)
-        self.assertEqual(self.b.func_doc, None)
-        self.b.func_doc = "The docstring"
-        del self.b.func_doc
         self.assertEqual(self.b.__doc__, None)
         self.assertEqual(self.b.func_doc, None)
 

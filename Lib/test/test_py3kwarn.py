@@ -261,6 +261,48 @@ class TestPy3KWarnings(unittest.TestCase):
             with check_py3k_warnings() as w:
                 self.assertWarning(f.read(), w, expected)
 
+    def test_func_closure(self):
+        expected = ("The attribute func_closure is not supported in 3.x, ",
+                    "use '__closure__' instead")
+        def f(): pass
+        with check_py3k_warnings(expected, DeprecationWarning):
+            f.func_closure
+
+    def test_func_code(self):
+        expected = ("The attribute func_code is not supported in 3.x, ",
+                    "use '__code__' instead")
+        def f(): pass
+        with check_py3k_warnings() as w:
+            self.assertWarning(f.func_code, w, expected)
+
+    def test_func_defaults(self):
+        expected = ("The attribute func_defaults is not supported in 3.x, ",
+                    "use '__defaults__' instead")
+        def f(): pass
+        with check_py3k_warnings(expected, DeprecationWarning):
+            f.func_defaults
+
+    def test_func_dict(self):
+        expected = ("The attribute func_dict is not supported in 3.x, ",
+                    "use '__dict__' instead")
+        def f(): pass
+        with check_py3k_warnings(expected, DeprecationWarning):
+            f.func_dict
+
+    def test_func_doc(self):
+        expected = ("The attribute func_doc is not supported in 3.x, ",
+                    "use '__doc__' instead")
+        def f(): pass
+        with check_py3k_warnings(expected, DeprecationWarning):
+            f.func_doc
+
+    def test_func_globals(self):
+        expected = ("The attribute func_globals is not supported in 3.x, ",
+                    "use '__globals__' instead")
+        def f(): pass
+        with check_py3k_warnings(expected, DeprecationWarning):
+            f.func_globals
+
     def test_hash_inheritance(self):
         with check_py3k_warnings() as w:
             # With object as the base class

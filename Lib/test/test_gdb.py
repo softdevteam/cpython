@@ -724,7 +724,7 @@ $''')
         bt = self.get_stack_trace(script=self.get_sample_script(),
                                   cmds_after_breakpoint=['py-down'])
         self.assertEndsWith(bt,
-                            'Unable to find a newer python frame\n')
+                            'Unable to locate python frame\n')
 
     @unittest.skipUnless(HAS_PYUP_PYDOWN, "test requires py-up/py-down commands")
     @unittest.skipIf(python_is_optimized(),
