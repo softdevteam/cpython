@@ -903,13 +903,23 @@ ast_for_decorators(struct compiling *c, const node *n)
     return decorator_seq;
 }
 
+static int
+compiler_islistcomp(stmt_ty s)
+{
+    if (s->kind != Expr_kind)
+        return 0;
+    return s->v.Expr.value->kind == ListComp_kind;
+}
+
 static stmt_ty
 ast_for_funcdef(struct compiling *c, const node *n, asdl_seq *decorator_seq)
 {
     /* funcdef: 'def' NAME parameters ':' suite */
     identifier name;
     arguments_ty args;
-    asdl_seq *body;
+    asdl_seq *body, *lstcomp, *var_of_int;
+    int nc, i, y, islistcomp;
+    stmt_ty st, var_st;
     int name_i = 1;
 
     REQ(n, funcdef);
@@ -925,6 +935,26 @@ ast_for_funcdef(struct compiling *c, const node *n, asdl_seq *decorator_seq)
     body = ast_for_suite(c, CHILD(n, name_i + 3));
     if (!body)
         return NULL;
+    
+    if (Py_Py3kWarningFlag) {
+        nc = asdl_seq_LEN(body);
+        for (i = 0; i < nc; i++) {
+            st = (stmt_ty)asdl_seq_GET(body, i);
+            islistcomp = compiler_islistcomp(st);
+            if (islistcomp) {
+                lstcomp = asdl_seq_GET(body, i);
+                var_of_int = asdl_seq_GET(lstcomp, 3);
+                for (y=i; y < nc; y++) {
+                    var_st = (stmt_ty)asdl_seq_GET(body, y);
+                    if ((var_st == var_of_int) &&
+                        !ast_3x_warn(c, n, "This listcomp does not leak a variable in 3.x",
+                                     "assign the variable before use"))
+                        return 0;
+                }
+            }
+        }  
+    }
+   
 
     return FunctionDef(name, args, body, decorator_seq, LINENO(n),
                        n->n_col_offset, c->c_arena);
@@ -1436,8 +1466,9 @@ ast_for_atom(struct compiling *c, const node *n)
     case LSQB: /* list (or list comprehension) */
         ch = CHILD(n, 1);
 
-        if (TYPE(ch) == RSQB)
+        if (TYPE(ch) == RSQB) {
             return List(NULL, Load, LINENO(n), n->n_col_offset, c->c_arena);
+        }
 
         REQ(ch, listmaker);
         if (NCH(ch) == 1 || TYPE(CHILD(ch, 1)) == COMMA) {
@@ -1448,6 +1479,10 @@ ast_for_atom(struct compiling *c, const node *n)
             return List(elts, Load, LINENO(n), n->n_col_offset, c->c_arena);
         }
         else
+            if (Py_Py3kWarningFlag &&
+                    !ast_3x_warn(c, n, "list comp without parenthesis is invalid in 3.x",
+                            "use parenthesis for list items more than one"))
+                        return NULL;
             return ast_for_listcomp(c, ch);
     case LBRACE: {
         /* dictorsetmaker:
