@@ -75,10 +75,10 @@ class TokenTests(unittest.TestCase):
                     self.assertEqual(str(w.message), "using just a '0' prefix for octal literals is not supported in 3.x: " \
                                         "use the '0o' prefix for octal integers")
                     self.assertEqual(len(w), 2)
-                    self.assertIn("using just a '0' prefix for octal literals is not supported in 3.x:: \n" 
+                    self.assertIn("using just a '0' prefix for octal literals is not supported in 3.x:: \n"
                                     "use the '0o' prefix for octal integers",
                                     str(oct.exception))
-                              
+
     def test_long_integers(self):
         x = 0L
         x = 0l
@@ -472,7 +472,7 @@ hello world
                 print >> sys.stdout
                 for warning in w:
                     self.assertTrue(Py3xWarning is w.category)
-                    self.assertEqual(str(w.message), "print must be called as a function, not a statement in 3.x", 
+                    self.assertEqual(str(w.message), "print must be called as a function, not a statement in 3.x",
                                      "You can fix this now by using parentheses for arguments to 'print'")
 
     def test_del_stmt(self):
@@ -1057,6 +1057,24 @@ hello world
         nums = [1, 2, 3]
         self.assertEqual({i:i+1 for i in nums}, {1: 2, 2: 3, 3: 4})
 
+    def test_listcomp_py3k_paren(self):
+        [x for x in [1, 2, 2]]
+        expected = "list comp without parenthesis is invalid in 3.x: use parenthesis for list items more than one"
+        with check_py3k_warnings((expected, SyntaxWarning)):
+            [x for x in 1, 2, 3]
+
+    def test_listcomps_py3k_scope(self):
+        def foo(): print([x for x in [1, 2, 2]])
+        expected = "This listcomp does not leak a variable in 3.x: assign the variable before use"
+        with check_py3k_warnings((expected, SyntaxWarning)):
+            def foo(): x = 0; [x for x in [1, 2, 2]]; print(x)
+        def foo(): x = 0; print(x); [x for x in [1, 2, 2]]
+        def foo():
+            x = 0
+            if x > 0: 
+                [x for x in [1, 2, 2]]
+                print(x)
+
     def test_listcomps(self):
         # list comprehension tests
         nums = [1, 2, 3, 4, 5]
@@ -1247,7 +1265,7 @@ hello world
                 self.assertEqual(ur'foo', u'foo')
                 for warning in w:
                     self.assertTrue(Py3xWarning is w.category)
-                    self.assertEqual(str(w.message), "the 'ur' prefix in string literals is not supported in 3.x: ", 
+                    self.assertEqual(str(w.message), "the 'ur' prefix in string literals is not supported in 3.x: ",
                                      "use a 'u' and two backslashes for a literal backslash")
 
 
