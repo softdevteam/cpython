@@ -369,6 +369,13 @@ class TestPy3KWarnings(unittest.TestCase):
         with check_py3k_warnings((expected, SyntaxWarning)):
             exec "b'\xbd'"
 
+    def test_raise_three_components(self):
+        expected = """the  raise clause with three components is not supported in 3.x; \
+                    use 'raise' with a single object"""
+        with check_py3k_warnings((expected, SyntaxWarning)):
+            excType, excValue, excTraceback = sys.exc_info()
+            raise excType, excValue, excTraceback
+
 
 class TestStdlibRemovals(unittest.TestCase):
 
