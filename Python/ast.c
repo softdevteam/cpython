@@ -2459,6 +2459,12 @@ ast_for_flow_stmt(struct compiling *c, const node *n)
             else if (NCH(ch) == 6) {
                 expr_ty expr1, expr2, expr3;
 
+                if (Py_Py3kWarningFlag &&
+                    !ast_3x_warn(c, n, "the  raise clause with three components is not supported in 3.x", 
+                                 "use 'raise' with a single object")) {
+                        return NULL;
+                }
+
                 expr1 = ast_for_expr(c, CHILD(ch, 1));
                 if (!expr1)
                     return NULL;
