@@ -1,7 +1,7 @@
 # Very rudimentary test of threading module
 
 import test.test_support
-from test.test_support import verbose, cpython_only
+from test.test_support import verbose, cpython_only, check_py3k_warnings
 from test.script_helper import assert_python_ok
 
 import random
@@ -479,6 +479,23 @@ class ThreadTests(BaseTestCase):
             for t in threads:
                 t.join()
             self.assertRaises(ValueError, bs.release)
+
+    def test_py3k_thread_module(sellf):
+        expected = "In 3.x, the thread module is removed: use the threading module instead"
+        with check_py3k_warnings() as w:
+            from thread import get_ident
+    
+    def test_threading_module_method_rename(self):
+        import threading
+        expected = "_get_ident is removed in 3.x: use get_ident instead"
+        with check_py3k_warnings() as w:
+            _get_indent()
+        expected = "_start_new_thread is removed in 3.x: use start_new_thread instead"
+        with check_py3k_warnings() as w:
+            _start_new_thread()
+        expected = "_allocate_lock is removed in 3.x: use allocate_lock instead"
+        with check_py3k_warnings() as w:
+            _allocate_lock()
 
 class ThreadJoinOnShutdown(BaseTestCase):
 

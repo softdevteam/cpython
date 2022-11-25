@@ -904,6 +904,10 @@ initthread(void)
 {
     PyObject *m, *d;
 
+    if (PyErr_WarnPy3k_WithFix("In 3.x, the thread module is removed", 
+                                "use the threading module instead", 1))
+        return;
+
     /* Initialize types: */
     if (PyType_Ready(&localdummytype) < 0)
         return;
