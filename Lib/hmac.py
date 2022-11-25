@@ -4,6 +4,8 @@ Implements the HMAC algorithm as described by RFC 2104.
 """
 
 import warnings as _warnings
+import sys
+
 
 from operator import _compare_digest as compare_digest
 
@@ -41,6 +43,10 @@ class HMAC:
             return
 
         if digestmod is None:
+            if sys.py3kwarning:
+                _warnings.warnpy3k_with_fix('the digestmod paramemer is required in 3.x', 
+                                  'generate a digest with hashlib module',
+                                  DeprecationWarning, stacklevel=4)
             import hashlib
             digestmod = hashlib.md5
 

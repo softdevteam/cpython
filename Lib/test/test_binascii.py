@@ -172,8 +172,11 @@ class BinASCIITest(unittest.TestCase):
         self.assertRaises(TypeError, binascii.a2b_hex, t[:-1] + 'q')
 
         # Verify the treatment of Unicode strings
-        if test_support.have_unicode:
-            self.assertEqual(binascii.hexlify(unicode('a', 'ascii')), '61')
+        with test_support.check_py3k_warnings(("The hexlify() module expects bytes in 3.x; use the 'b' prefix on the string",
+                                  DeprecationWarning)):
+            if test_support.have_unicode:
+                self.assertEqual(binascii.hexlify(unicode('a', 'ascii')), '61')
+                self.assertEqual(binascii.b2a_hex(unicode('a', 'ascii')), '61')
 
     def test_qp(self):
         type2test = self.type2test
