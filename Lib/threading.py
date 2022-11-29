@@ -32,25 +32,24 @@ __all__ = ['activeCount', 'active_count', 'Condition', 'currentThread',
            'Lock', 'RLock', 'Semaphore', 'BoundedSemaphore', 'Thread',
            'Timer', 'setprofile', 'settrace', 'local', 'stack_size']
 
+def _get_ident():
+    warnings.warnpy3k_with_fix("_get_ident() is renamed in 3.x", "use get_ident() instead",
+                      stacklevel=2)
+    thread.get_ident
+
+def _start_new_thread():
+    warnings.warnpy3k_with_fix("_start_new_thread() is removed in 3.x", "use start_new_thread() instead",
+                      stacklevel=2)
+    thread.start_new_thread
+
+def _allocate_lock():
+    warnings.warnpy3k_with_fix("_allocate_lock() is removed in 3.x", "use allocate_lock instead",
+                      stacklevel=2)
+    thread.allocate_lock
+
 _start_new_thread = thread.start_new_thread
 _allocate_lock = thread.allocate_lock
 _get_ident = thread.get_ident
-
-# def _get_ident():
-#     warnings.warnpy3k_with_fix("_get_ident() is renamed in 3.x", "use get_ident() instead",
-#                       stacklevel=2)
-#     thread.get_ident
-
-# def _start_new_thread():
-#     warnings.warnpy3k_with_fix("_start_new_thread() is removed in 3.x", "use start_new_thread() instead",
-#                       stacklevel=2)
-#     thread.start_new_thread
-
-# def _allocate_lock():
-#     warnings.warnpy3k_with_fix("_allocate_lock() is removed in 3.x", "use allocate_lock instead",
-#                       stacklevel=2)
-#     thread.allocate_lock
-
 ThreadError = thread.error
 del thread
 
