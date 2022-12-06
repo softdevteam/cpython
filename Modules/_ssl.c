@@ -565,6 +565,16 @@ _setSSLError (char *errstr, int errcode, char *filename, int lineno) {
     return NULL;
 }
 
+static int
+_ssl_incompatible(const char* msg, const char* fix, int stacklevel) {
+    return PyErr_WarnEx_WithFix(
+        PyExc_SyntaxWarning, msg, fix, stacklevel
+    );
+}
+
+#define PY_SSL_INCOMPATIBLE(name, fix, stacklevel, ret) \
+    if (_ssl_incompatible((name), (fix), (stacklevel)) == -1) return (ret)
+
 /*
  * SSL objects
  */
@@ -2193,16 +2203,24 @@ context_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
         ctx = SSL_CTX_new(TLSv1_method());
 #if HAVE_TLSv1_2
     else if (proto_version == PY_SSL_VERSION_TLS1_1)
+        PY_SSL_INCOMPATIBLE("ssl.PROTOCOL_TLSv1_1 is not supported in some 3.x versions", 
+                            "use ssl.PROTOCOL_TLS instead", 2, NULL);
         ctx = SSL_CTX_new(TLSv1_1_method());
     else if (proto_version == PY_SSL_VERSION_TLS1_2)
+        PY_SSL_INCOMPATIBLE("ssl.PROTOCOL_TLSv1_2 is not supported in some 3.x versions",
+                            "use ssl.PROTOCOL_TLS instead", 2, NULL);
         ctx = SSL_CTX_new(TLSv1_2_method());
 #endif
 #ifndef OPENSSL_NO_SSL3
     else if (proto_version == PY_SSL_VERSION_SSL3)
+        PY_SSL_INCOMPATIBLE("ssl.PROTOCOL_SSLv3 is not supported in some 3.x versions",
+                            "use ssl.PROTOCOL_SSLv23 instead", 2, NULL);
         ctx = SSL_CTX_new(SSLv3_method());
 #endif
 #ifndef OPENSSL_NO_SSL2
     else if (proto_version == PY_SSL_VERSION_SSL2)
+        PY_SSL_INCOMPATIBLE("ssl.PROTOCOL_SSLv2 is not supported in some 3.x versions",
+                            "use ssl.PROTOCOL_SSLv23 instead", 2, NULL);
         ctx = SSL_CTX_new(SSLv2_method());
 #endif
     else if (proto_version == PY_SSL_VERSION_TLS)
