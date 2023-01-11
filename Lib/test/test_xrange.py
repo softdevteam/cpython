@@ -1,6 +1,7 @@
 # Python test set -- built-in functions
 
 import test.test_support, unittest
+from test.test_support import check_py3k_warnings
 import sys
 import pickle
 import itertools
@@ -178,6 +179,11 @@ class XrangeTest(unittest.TestCase):
             r = xrange(*t)
             r_out = eval(repr(r))
             self.assert_xranges_equivalent(r, r_out)
+
+    def test_xrange_3k(self):
+        expected = "xrange() is not supported in 3.x: use range() instead"
+        with check_py3k_warnings((expected, DeprecationWarning)):
+            xrange(1, 10000)
 
     def test_range_iterators(self):
         # see issue 7298
