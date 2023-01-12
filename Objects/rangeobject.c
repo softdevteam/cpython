@@ -68,6 +68,9 @@ range_new(PyTypeObject *type, PyObject *args, PyObject *kw)
     long ilow = 0, ihigh = 0, istep = 1;
     unsigned long n;
 
+    if (PyErr_WarnPy3k_WithFix("xrange() is not supported in 3.x", "use range() instead", 1) < 0)
+        return NULL;
+
     if (!_PyArg_NoKeywords("xrange()", kw))
         return NULL;
 
