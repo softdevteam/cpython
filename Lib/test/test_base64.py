@@ -1,6 +1,7 @@
 import unittest
 from test import test_support
 import base64
+import sys
 
 
 
@@ -21,6 +22,11 @@ class LegacyBase64TestCase(unittest.TestCase):
         # Non-bytes
         eq(base64.encodestring(bytearray('abc')), 'YWJj\n')
 
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                base64.encodestring("")
+
     def test_decodestring(self):
         eq = self.assertEqual
         eq(base64.decodestring("d3d3LnB5dGhvbi5vcmc=\n"), "www.python.org")
@@ -36,6 +42,11 @@ class LegacyBase64TestCase(unittest.TestCase):
         eq(base64.decodestring(''), '')
         # Non-bytes
         eq(base64.decodestring(bytearray("YWJj\n")), "abc")
+
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                base64.decodestring('')
 
     def test_encode(self):
         eq = self.assertEqual
