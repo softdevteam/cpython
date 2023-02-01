@@ -2216,18 +2216,27 @@ static PyObject *dictiter_new(PyDictObject *, PyTypeObject *);
 static PyObject *
 dict_iterkeys(PyDictObject *dict)
 {
+    if (PyErr_WarnPy3k_WithFix("dict.iterkeys() is not supported in 3.x",
+                                "use dict.keys() instead", 1) < 0)
+        return NULL;
     return dictiter_new(dict, &PyDictIterKey_Type);
 }
 
 static PyObject *
 dict_itervalues(PyDictObject *dict)
 {
+    if (PyErr_WarnPy3k_WithFix("dict.itervalues() is not supported in 3.x",
+                                "use dict.values() instead", 1) < 0)
+        return NULL;
     return dictiter_new(dict, &PyDictIterValue_Type);
 }
 
 static PyObject *
 dict_iteritems(PyDictObject *dict)
 {
+    if (PyErr_WarnPy3k_WithFix("dict.iteritems() is not supported in 3.x",
+                                "use dict.items() instead", 1) < 0)
+        return NULL;
     return dictiter_new(dict, &PyDictIterItem_Type);
 }
 
@@ -3195,6 +3204,9 @@ PyTypeObject PyDictKeys_Type = {
 static PyObject *
 dictkeys_new(PyObject *dict)
 {
+    if (PyErr_WarnPy3k_WithFix("dict.viewkeys() is not supported in 3.x",
+                                "use dict.keys() instead", 1) < 0)
+        return NULL;
     return dictview_new(dict, &PyDictKeys_Type);
 }
 
@@ -3284,6 +3296,9 @@ PyTypeObject PyDictItems_Type = {
 static PyObject *
 dictitems_new(PyObject *dict)
 {
+    if (PyErr_WarnPy3k_WithFix("dict.viewitems() is not supported in 3.x",
+                                "use dict.items() instead", 1) < 0)
+        return NULL;
     return dictview_new(dict, &PyDictItems_Type);
 }
 
@@ -3349,5 +3364,8 @@ PyTypeObject PyDictValues_Type = {
 static PyObject *
 dictvalues_new(PyObject *dict)
 {
+    if (PyErr_WarnPy3k_WithFix("dict.viewvalues() is not supported in 3.x",
+                                "use dict.values() instead", 1) < 0)
+        return NULL;
     return dictview_new(dict, &PyDictValues_Type);
 }
