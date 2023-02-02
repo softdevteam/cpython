@@ -112,6 +112,42 @@ class TestPy3KWarnings(unittest.TestCase):
             w.reset()
             self.assertWarning({2:3} >= {}, w, expected)
 
+    def test_dict_viewkeys(self):
+        expected = 'dict.viewkeys() is not supported in 3.x: use dict.keys() instead'
+        with check_py3k_warnings() as w:
+            d = {}
+            d.viewkeys()
+
+    def test_dict_viewvalues(self):
+        expected = 'dict.viewvalues() is not supported in 3.x: use dict.values() instead'
+        with check_py3k_warnings() as w:
+            d = {}
+            d.viewvalues()
+
+    def test_dict_viewitems(self):
+        expected = 'dict.viewitems() is not supported in 3.x: use dict.items() instead'
+        with check_py3k_warnings() as w:
+            d = {}
+            d.viewitems()
+
+    def test_dict_iterkeys(self):
+        expected = 'dict.iterkeys() is not supported in 3.x: use dict.keys() instead'
+        with check_py3k_warnings() as w:
+            d = {}
+            d.iterkeys()
+
+    def test_dict_itervalues(self):
+        expected = 'dict.itervalues() is not supported in 3.x: use dict.values() instead'
+        with check_py3k_warnings() as w:
+            d = {}
+            d.itervalues()
+
+    def test_dict_iteritems(self):
+        expected = 'dict.iteritems() is not supported in 3.x: use dict.items() instead'
+        with check_py3k_warnings() as w:
+            d = {}
+            d.iteritems()
+
     def test_cell_inequality_comparisons(self):
         expected = 'cell comparisons not supported in 3.x'
         def f(x):
