@@ -2904,6 +2904,10 @@ listiter_next(listiterobject *it)
     PyListObject *seq;
     PyObject *item;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     assert(it != NULL);
     seq = it->it_seq;
     if (seq == NULL)

@@ -206,6 +206,21 @@ class TestPy3KWarnings(unittest.TestCase):
                 w.reset()
                 self.assertWarning(setattr(f, attr, None), w, expected)
 
+    def test_listiter_next(self):
+        expected = "the attribute 'next' is not supported in 3.x: use '__next__' or create a 'next' alias"
+        lst = iter([1, 2, 3])
+        tup = iter((1, 2, 3))
+        dit = iter({"one": 1})
+        rge = iter(range(4))
+        st = iter({2, 3})
+
+        with check_py3k_warnings() as w:
+            self.assertWarning(lst.next(), w, expected)
+            self.assertWarning(tup.next(), w, expected)
+            self.assertWarning(dit.next(), w, expected)
+            self.assertWarning(rge.next(), w, expected)
+            self.assertWarning(rge.next(), w, expected)
+
     def test_sort_cmp_arg(self):
         expected = "the cmp argument is not supported in 3.x"
         lst = range(5)

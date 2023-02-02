@@ -317,6 +317,10 @@ stringio_iternext(stringio *self)
     CHECK_INITIALIZED(self);
     CHECK_CLOSED(self);
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     if (Py_TYPE(self) == &PyStringIO_Type) {
         /* Skip method call overhead for speed */
         line = _stringio_readline(self, -1);

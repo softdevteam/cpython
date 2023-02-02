@@ -397,6 +397,10 @@ logreader_tp_iternext(LogReaderObject *self)
     unsigned char b0, b1;
 #endif
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     if (self->logfp == NULL) {
         PyErr_SetString(ProfilerError,
                         "cannot iterate over closed LogReader object");

@@ -1292,6 +1292,10 @@ dequeiter_next(dequeiterobject *it)
 {
     PyObject *item;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     if (it->deque->state != it->state) {
         it->counter = 0;
         PyErr_SetString(PyExc_RuntimeError,
@@ -1386,6 +1390,10 @@ deque_reviter(dequeobject *deque)
 static PyObject *
 dequereviter_next(dequeiterobject *it)
 {
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+        
     PyObject *item;
     if (it->counter == 0)
         return NULL;

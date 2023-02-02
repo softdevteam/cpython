@@ -1174,6 +1174,10 @@ buffered_iternext(buffered *self)
     PyObject *line;
     PyTypeObject *tp;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     CHECK_INITIALIZED(self);
 
     tp = Py_TYPE(self);

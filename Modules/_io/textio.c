@@ -2508,6 +2508,10 @@ textiowrapper_iternext(textio *self)
 
     CHECK_ATTACHED(self);
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     self->telling = 0;
     if (Py_TYPE(self) == &PyTextIOWrapper_Type) {
         /* Skip method call overhead for speed */

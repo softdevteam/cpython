@@ -1088,6 +1088,10 @@ formatteriter_next(formatteriterobject *it)
                                      &field_name, &format_spec, &conversion,
                                      &format_spec_needs_expanding);
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     /* all of the SubString objects point into it->str, so no
        memory management needs to be done on them */
     assert(0 <= result && result <= 2);
@@ -1240,6 +1244,10 @@ fieldnameiter_next(fieldnameiterobject *it)
     int is_attr;
     Py_ssize_t idx;
     SubString name;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     result = FieldNameIterator_next(&it->it_field, &is_attr,
                                     &idx, &name);

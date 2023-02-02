@@ -85,6 +85,10 @@ enum_next_long(enumobject *en, PyObject* next_item)
     PyObject *next_index;
     PyObject *stepped_up;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     if (en->en_longindex == NULL) {
         en->en_longindex = PyInt_FromSsize_t(PY_SSIZE_T_MAX);
         if (en->en_longindex == NULL) {
@@ -300,6 +304,10 @@ reversed_next(reversedobject *ro)
 {
     PyObject *item;
     Py_ssize_t index = ro->index;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     if (index >= 0) {
         item = PySequence_GetItem(ro->seq, index);

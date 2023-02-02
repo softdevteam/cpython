@@ -280,6 +280,10 @@ failed_throw:
 static PyObject *
 gen_iternext(PyGenObject *gen)
 {
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+        
     return gen_send_ex(gen, NULL, 0);
 }
 

@@ -848,6 +848,10 @@ static PyObject *setiter_iternext(setiterobject *si)
     register setentry *entry;
     PySetObject *so = si->si_set;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     if (so == NULL)
         return NULL;
     assert (PyAnySet_Check(so));

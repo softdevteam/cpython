@@ -2624,6 +2624,10 @@ static PyObject *dictiter_iternextkey(dictiterobject *di)
     register PyDictEntry *ep;
     PyDictObject *d = di->di_dict;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     if (d == NULL)
         return NULL;
     assert (PyDict_Check(d));
@@ -2696,6 +2700,10 @@ static PyObject *dictiter_iternextvalue(dictiterobject *di)
     register PyDictEntry *ep;
     PyDictObject *d = di->di_dict;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     if (d == NULL)
         return NULL;
     assert (PyDict_Check(d));
@@ -2767,6 +2775,10 @@ static PyObject *dictiter_iternextitem(dictiterobject *di)
     register Py_ssize_t i, mask;
     register PyDictEntry *ep;
     PyDictObject *d = di->di_dict;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     if (d == NULL)
         return NULL;

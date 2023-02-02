@@ -239,6 +239,10 @@ typedef struct {
 static PyObject *
 rangeiter_next(rangeiterobject *r)
 {
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+        
     if (r->index < r->len)
         return PyInt_FromLong(r->start + (r->index++) * r->step);
     return NULL;

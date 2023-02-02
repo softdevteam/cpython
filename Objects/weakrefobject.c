@@ -609,6 +609,10 @@ proxy_iter(PyWeakReference *proxy)
 static PyObject *
 proxy_iternext(PyWeakReference *proxy)
 {
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+        
     if (!proxy_checkref(proxy))
         return NULL;
     return PyIter_Next(PyWeakref_GET_OBJECT(proxy));

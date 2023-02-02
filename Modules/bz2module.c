@@ -1526,6 +1526,11 @@ BZ2File_iternext(BZ2FileObject *self)
 {
     PyStringObject* ret;
     ACQUIRE_LOCK(self);
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+        
     if (self->mode == MODE_CLOSED) {
         RELEASE_LOCK(self);
         PyErr_SetString(PyExc_ValueError,

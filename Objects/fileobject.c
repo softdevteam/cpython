@@ -2349,6 +2349,10 @@ file_iternext(PyFileObject *f)
 {
     PyStringObject* l;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     if (f->f_fp == NULL)
         return err_closed();
     if (!f->readable)

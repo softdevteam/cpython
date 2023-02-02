@@ -173,6 +173,10 @@ calliter_traverse(calliterobject *it, visitproc visit, void *arg)
 static PyObject *
 calliter_iternext(calliterobject *it)
 {
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+        
     if (it->it_callable != NULL) {
         PyObject *args = PyTuple_New(0);
         PyObject *result;

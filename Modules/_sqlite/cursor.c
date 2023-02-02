@@ -1,6 +1,6 @@
 /* cursor.c - the cursor type
  *
- * Copyright (C) 2004-2010 Gerhard Häring <gh@ghaering.de>
+ * Copyright (C) 2004-2010 Gerhard Hï¿½ring <gh@ghaering.de>
  *
  * This file is part of pysqlite.
  *
@@ -35,6 +35,10 @@ static pysqlite_StatementKind detect_statement_type(char* statement)
     char buf[20];
     char* src;
     char* dst;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     src = statement;
     /* skip over whitepace */

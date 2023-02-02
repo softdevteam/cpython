@@ -103,6 +103,10 @@ groupby_next(groupbyobject *gbo)
 {
     PyObject *r, *grouper;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     /* skip to next iteration group */
     for (;;) {
         if (gbo->currkey == NULL)
@@ -234,6 +238,10 @@ _grouper_next(_grouperobject *igo)
     groupbyobject *gbo = (groupbyobject *)igo->parent;
     PyObject *r;
     int rcmp;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     if (gbo->currvalue == NULL) {
         if (groupby_step(gbo) < 0)
@@ -482,6 +490,10 @@ static PyObject *
 tee_next(teeobject *to)
 {
     PyObject *value, *link;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     if (to->index >= LINKCELLS) {
         link = teedataobject_jumplink(to->dataobj);
@@ -753,6 +765,10 @@ cycle_next(cycleobject *lz)
     PyObject *it;
     PyObject *tmp;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     while (1) {
         item = PyIter_Next(lz->it);
         if (item != NULL) {
@@ -899,6 +915,10 @@ dropwhile_next(dropwhileobject *lz)
     long ok;
     PyObject *(*iternext)(PyObject *);
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     iternext = *Py_TYPE(it)->tp_iternext;
     for (;;) {
         item = iternext(it);
@@ -1041,6 +1061,10 @@ takewhile_next(takewhileobject *lz)
     PyObject *item, *good;
     PyObject *it = lz->it;
     long ok;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     if (lz->stop == 1)
         return NULL;
@@ -1233,6 +1257,10 @@ islice_next(isliceobject *lz)
     Py_ssize_t oldnext;
     PyObject *(*iternext)(PyObject *);
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     if (it == NULL)
         return NULL;
 
@@ -1382,6 +1410,10 @@ starmap_next(starmapobject *lz)
     PyObject *args;
     PyObject *result;
     PyObject *it = lz->it;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     args = (*Py_TYPE(it)->tp_iternext)(it);
     if (args == NULL)
@@ -1554,6 +1586,10 @@ imap_next(imapobject *lz)
     PyObject *result;
     Py_ssize_t numargs, i;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     numargs = PyTuple_Size(lz->iters);
     argtuple = PyTuple_New(numargs);
     if (argtuple == NULL)
@@ -1702,6 +1738,10 @@ static PyObject *
 chain_next(chainobject *lz)
 {
     PyObject *item;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     /* lz->source is the iterator of iterables. If it's NULL, we've already
      * consumed them all. lz->active is the current iterator. If it's NULL,
@@ -1923,6 +1963,10 @@ product_next(productobject *lz)
     PyObject *result = lz->result;
     Py_ssize_t npools = PyTuple_GET_SIZE(pools);
     Py_ssize_t i;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     if (lz->stopped)
         return NULL;
@@ -2156,6 +2200,10 @@ combinations_next(combinationsobject *co)
     Py_ssize_t n = PyTuple_GET_SIZE(pool);
     Py_ssize_t r = co->r;
     Py_ssize_t i, j, index;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     if (co->stopped)
         return NULL;
@@ -2405,6 +2453,10 @@ cwr_next(cwrobject *co)
     Py_ssize_t n = PyTuple_GET_SIZE(pool);
     Py_ssize_t r = co->r;
     Py_ssize_t i, j, index;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     if (co->stopped)
         return NULL;
@@ -2666,6 +2718,10 @@ permutations_next(permutationsobject *po)
     Py_ssize_t r = po->r;
     Py_ssize_t i, j, k, index;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     if (po->stopped)
         return NULL;
 
@@ -2870,6 +2926,10 @@ compress_next(compressobject *lz)
     PyObject *(*selectornext)(PyObject *) = *Py_TYPE(selectors)->tp_iternext;
     int ok;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     while (1) {
         /* Steps:  get datum, get selector, evaluate selector.
            Order is important (to match the pure python version
@@ -3015,6 +3075,10 @@ ifilter_next(ifilterobject *lz)
     long ok;
     PyObject *(*iternext)(PyObject *);
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     iternext = *Py_TYPE(it)->tp_iternext;
     for (;;) {
         item = iternext(it);
@@ -3159,6 +3223,10 @@ ifilterfalse_next(ifilterfalseobject *lz)
     PyObject *it = lz->it;
     long ok;
     PyObject *(*iternext)(PyObject *);
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     iternext = *Py_TYPE(it)->tp_iternext;
     for (;;) {
@@ -3362,6 +3430,10 @@ count_nextlong(countobject *lz)
 {
     PyObject *long_cnt;
     PyObject *stepped_up;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     long_cnt = lz->long_cnt;
     if (long_cnt == NULL) {
@@ -3586,6 +3658,10 @@ izip_next(izipobject *lz)
     PyObject *item;
     PyObject *olditem;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     if (tuplesize == 0)
         return NULL;
     if (Py_REFCNT(result) == 1) {
@@ -3728,6 +3804,10 @@ repeat_traverse(repeatobject *ro, visitproc visit, void *arg)
 static PyObject *
 repeat_next(repeatobject *ro)
 {
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     if (ro->cnt == 0)
         return NULL;
     if (ro->cnt > 0)
@@ -3931,6 +4011,10 @@ izip_longest_next(iziplongestobject *lz)
     PyObject *it;
     PyObject *item;
     PyObject *olditem;
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
 
     if (tuplesize == 0)
         return NULL;

@@ -2101,6 +2101,10 @@ instance_iternext(PyInstanceObject *self)
 {
     PyObject *func;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     if (nextstr == NULL) {
         nextstr = PyString_InternFromString("next");
         if (nextstr == NULL)

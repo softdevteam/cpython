@@ -479,6 +479,10 @@ bytesio_iternext(bytesio *self)
     char *next;
     Py_ssize_t n;
 
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+
     CHECK_CLOSED(self);
 
     n = get_line(self, &next);

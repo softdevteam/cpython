@@ -335,6 +335,11 @@ IO_iternext(Iobject *self)
 {
     PyObject *next;
     next = IO_readline((IOobject *)self, NULL);
+
+    if (PyErr_WarnPy3k_WithFix("the attribute 'next' is not supported in 3.x", 
+                               "use '__next__' or create a 'next' alias", 1) < 0)
+        return NULL;
+        
     if (!next)
         return NULL;
     if (!PyString_GET_SIZE(next)) {
