@@ -262,6 +262,7 @@ class ProgramsTestCase(BaseTestCase):
         output = self.run_python(args)
         self.check_output(output)
 
+    @unittest.skipUnless(Py_DEBUG, 'need a debug build')
     def test_script_regrtest(self):
         # Lib/test/regrtest.py
         script = os.path.join(self.testdir, 'regrtest.py')
@@ -269,27 +270,32 @@ class ProgramsTestCase(BaseTestCase):
         args = self.python_args + [script] + self.regrtest_args + self.tests
         self.run_tests(args)
 
+    @unittest.skipUnless(Py_DEBUG, 'need a debug build')
     def test_module_test(self):
         # -m test
         args = self.python_args + ['-m', 'test'] + self.regrtest_args + self.tests
         self.run_tests(args)
 
+    @unittest.skipUnless(Py_DEBUG, 'need a debug build')
     def test_module_regrtest(self):
         # -m test.regrtest
         args = self.python_args + ['-m', 'test.regrtest'] + self.regrtest_args + self.tests
         self.run_tests(args)
 
+    @unittest.skipUnless(Py_DEBUG, 'need a debug build')
     def test_module_autotest(self):
         # -m test.autotest
         args = self.python_args + ['-m', 'test.autotest'] + self.regrtest_args + self.tests
         self.run_tests(args)
 
+    @unittest.skipUnless(Py_DEBUG, 'need a debug build')
     def test_module_from_test_autotest(self):
         # from test import autotest
         code = 'from test import autotest'
         args = self.python_args + ['-c', code] + self.regrtest_args + self.tests
         self.run_tests(args)
 
+    @unittest.skipUnless(Py_DEBUG, 'need a debug build')
     def test_script_autotest(self):
         # Lib/test/autotest.py
         script = os.path.join(self.testdir, 'autotest.py')
