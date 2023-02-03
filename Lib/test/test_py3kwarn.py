@@ -56,6 +56,17 @@ class TestPy3KWarnings(unittest.TestCase):
         # Something like def f((a, (b))): pass will raise the tuple
         # unpacking warning.
 
+    def test_warn_py3k_exceptions(self):
+        d = {}
+        for i in d.keys():
+            pass
+        for i in d.items():
+            pass
+        for i in d.values():
+            pass
+        for i in range(10):
+            pass
+        
     def test_forbidden_names(self):
         # So we don't screw up our globals
         def safe_exec(expr):
@@ -85,7 +96,21 @@ class TestPy3KWarnings(unittest.TestCase):
                 safe_exec("def f({0}=43): pass".format(keyword))
                 self.assertWarning(None, w, expected)
                 w.reset()
-
+        with check_py3k_warnings(('', SyntaxWarning)) as w:
+            keyword = "var"
+            x = {"one": 1}
+            safe_exec("{0} = x.keys()".format(keyword))
+            self.assertWarning(None, w, "dict.keys() returns a view in 3.x: convert the result to a list")
+            w.reset()
+            safe_exec("{0} = x.values()".format(keyword))
+            self.assertWarning(None, w, "x.values() returns a view in 3.x: convert the result to a list")
+            w.reset()
+            safe_exec("{0} = x.items()".format(keyword))
+            self.assertWarning(None, w, "dict.items() returns a view in 3.x: convert the result to a list")
+            w.reset()
+            safe_exec("{0} = range(10)".format(keyword))
+            self.assertWarning(None, w, "range() returns a view in 3.x: convert the result to a list")
+            w.reset()
 
     def test_type_inequality_comparisons(self):
         expected = 'type inequality comparisons not supported in 3.x'
