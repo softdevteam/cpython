@@ -2409,6 +2409,11 @@ ast_for_flow_stmt(struct compiling *c, const node *n)
                              n->n_col_offset, c->c_arena);
             }
             else if (NCH(ch) == 4) {
+                if (Py_Py3kWarningFlag &&
+                    !ast_3x_warn(c, n, "the  raise clause with three components is not supported in 3.x", 
+                                 "use 'raise' with a single object")) {
+                        return NULL;
+                }
                 expr_ty expr1, expr2;
 
                 expr1 = ast_for_expr(c, CHILD(ch, 1));
@@ -3059,6 +3064,20 @@ ast_for_except_clause(struct compiling *c, const node *exc, node *body)
         asdl_seq *suite_seq;
         expr_ty expression;
         expr_ty e = ast_for_expr(c, CHILD(exc, 3));
+        expr_ty as_or_comma = ast_for_expr(c, CHILD(exc, 2));
+
+        if (TYPE(CHILD(exc, 2)) == COMMA)
+            if (Py_Py3kWarningFlag &&
+                    !ast_3x_warn(c, exc, "the commas syntax for the except clause is not supported in 3.x", 
+                                 "use the 'as' syntax instead")) {
+                return NULL;
+            }
+        if (e == Tuple_kind)
+            if (Py_Py3kWarningFlag &&
+                    !ast_3x_warn(c, exc, "Iterable exceptions are  not supported in 3.x", 
+                                 "access the arguments through the 'args' attribute instead")) {
+                return NULL;
+            }
         if (!e)
             return NULL;
         if (!set_context(c, e, Store, CHILD(exc, 3)))

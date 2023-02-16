@@ -189,6 +189,11 @@ class TestPy3KWarnings(unittest.TestCase):
         with check_py3k_warnings() as w:
             self.assertWarning(sys.exc_clear(), w, expected)
 
+    def test_sys_exc_info(self):
+        expected = 'sys.exc_info() not supported in 3.x; use except clauses'
+        with check_py3k_warnings() as w:
+            self.assertWarning(sys.exc_info(), w, expected)
+
     def test_methods_members(self):
         expected = '__members__ and __methods__ not supported in 3.x'
         class C:
