@@ -258,6 +258,22 @@ class TestPy3KWarnings(unittest.TestCase):
         c = C()
         with check_py3k_warnings() as w:
             self.assertWarning(dir(c), w, expected)
+    
+    def test_sys_exc_info(self):
+        expected = 'sys.exc_info() not supported in 3.x: use except clauses.'
+        with check_py3k_warnings() as w:
+            self.assertWarning(sys.exc_info(), w, expected)
+
+    def test_exception_iterable(self):
+        def helperftn():
+            try:
+                pass
+            except RuntimeError as (num, message):
+                return None
+        expected = "Iterable exceptions are not supported in 3.x: access the arguments through the 'args' attribute instead"
+        with check_py3k_warnings() as w:
+            self.assertWarning(helperftn, w, expected)
+
 
     def test_softspace(self):
         expected = 'file.softspace not supported in 3.x'
