@@ -112,6 +112,10 @@ md5_hexdigest(md5object *self)
     unsigned char hexdigest[32];
     int i, j;
 
+    if (PyErr_WarnPy3k_WithFix("md5.hexdigest() returns str in in 3.x",
+                       "call encode() on the result to get bytes.", 1) < 0)
+        return NULL;
+
     /* make a temporary copy, and perform the final */
     mdContext = self->md5;
     md5_finish(&mdContext, digest);

@@ -296,6 +296,14 @@ class TestPy3KWarnings(unittest.TestCase):
         with check_py3k_warnings((expected, SyntaxWarning)):
             exec "def f((a, b)): pass"
 
+    def test_md5_hexdigest(self):
+        import hashlib
+        m = hashlib.md5()
+        m.update("000005fab4534d05api_key9a0554259914a86fb9e7eb014e4e5d52permswrite")
+        expected = "md5.hexdigest() returns str in in 3.x: call encode() on the result to get bytes."
+        with check_py3k_warnings() as w:
+            self.assertWarning(m.hexdigest(), w, expected)
+
     def test_buffer(self):
         expected = 'buffer() not supported in 3.x'
         with check_py3k_warnings() as w:
