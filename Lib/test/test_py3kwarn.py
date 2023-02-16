@@ -331,6 +331,17 @@ class TestPy3KWarnings(unittest.TestCase):
             with check_py3k_warnings() as w:
                 self.assertWarning(f.read(), w, expected)
 
+    def test_tokenize(self):
+        import tokenize
+        import io
+        expected = "tokenize() changed in 3.x: use generate_tokens() instead."
+        def helper_tok():
+            for tok in tokenize.tokenize(io.BytesIO('1 + 2').readline):
+                print tok
+        with check_py3k_warnings() as w:
+            self.assertWarning(helper_tok(), w, expected)
+             
+
     def test_file(self):
         expected = ("The builtin 'file()'/'open()' function is not supported in 3.x, "
                     "use the 'io.open()' function instead with the encoding keyword argument")
