@@ -95,10 +95,6 @@ import os
 from collections import namedtuple
 from contextlib import closing
 
-import warnings
-warnings.warnpy3k_with_fix("ssl.textwrap, ssl.re, ssl.closing modules are not supported in 3.x", 
-                           "import textwrap, re and closing modules directly instead.", stacklevel=2)
-
 import _ssl             # if we can't import it, let the error propagate
 
 from _ssl import OPENSSL_VERSION_NUMBER, OPENSSL_VERSION_INFO, OPENSSL_VERSION
@@ -149,6 +145,7 @@ from socket import socket, AF_INET, SOCK_STREAM, create_connection
 from socket import SOL_SOCKET, SO_TYPE
 import base64        # for DER-to-PEM translation
 import errno
+import warnings
 
 if _ssl.HAS_TLS_UNIQUE:
     CHANNEL_BINDING_TYPES = ['tls-unique']
@@ -1019,8 +1016,6 @@ def sslwrap_simple(sock, keyfile=None, certfile=None):
     """A replacement for the old socket.ssl function.  Designed
     for compability with Python 2.5 and earlier.  Will disappear in
     Python 3.0."""
-    warnings.warnpy3k_with_fix("ssl.sslwrap_simple() is removed in 3.x", 
-                                "use ssl.wrap_socket() instead.", stacklevel=2)
     if hasattr(sock, "_sock"):
         sock = sock._sock
 

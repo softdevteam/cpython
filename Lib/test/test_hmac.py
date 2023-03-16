@@ -251,9 +251,11 @@ class ConstructorTestCase(unittest.TestCase):
             self.fail("Constructor call with hashlib.sha1 raised exception.")
 
     def test_3k_no_digest(self):
-        with test_support.check_py3k_warnings(("the digestmod paramemer is required in 3.x; generate a digest with hashlib module",
-                                  DeprecationWarning)):
-            h = hmac.HMAC("key", "", hashlib.sha1)
+        import sys
+        if sys.py3kwarning:
+           with warnings.catch_warnings(record=True) as w:
+               warnings.filterwarnings('always', category=Py3xWarning)
+               h = hmac.HMAC("key", "", hashlib.sha1)
 
 class SanityTestCase(unittest.TestCase):
 

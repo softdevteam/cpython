@@ -4,7 +4,6 @@
 import sys
 import unittest
 from test import test_support as support
-from test import test_support 
 from test.script_helper import assert_python_ok
 import asyncore
 import socket
@@ -111,36 +110,6 @@ class BasicTests(unittest.TestCase):
                 pass
             else:
                 raise
-
-    def test_py3k_removed_ssl_modules(self):
-        expected = "ssl.textwrap, ssl.re, ssl.closing modules are not supported in 3.x: import textwrap, re and closing modules directly instead."
-        with test_support.check_py3k_warnings(expected, DeprecationWarning):
-            import ssl
-
-    def test_py3k_sslwrap_simple(self):
-        expected = "ssl.sslwrap_simple() is removed in 3.x: use ssl.wrap_socket() instead."
-        with test_support.check_py3k_warnings(expected, DeprecationWarning):
-            from ssl import sslwrap_simple
-
-    def test_py3k_protocols_tlsv11(self):
-        expected = "ssl.PROTOCOL_TLSv1_1 is not supported in some 3.x versions: use ssl.PROTOCOL_TLS instead"
-        with test_support.check_py3k_warnings(expected, DeprecationWarning):
-            ssl.PROTOCOL_TLSv1_1
-
-    def test_py3k_protocols_tlsv12(self):
-        expected = "ssl.PROTOCOL_TLSv1_2 is not supported in some 3.x versions: use ssl.PROTOCOL_TLS instead"
-        with test_support.check_py3k_warnings(expected, DeprecationWarning):
-            ssl.PROTOCOL_TLSv1_2
-
-    def test_py3k_protocols_sslv3(self):
-        expected = "ssl.PROTOCOL_SSLv3 is not supported in some 3.x versions: use ssl.PROTOCOL_SSLv23 instead"
-        with test_support.check_py3k_warnings(expected, DeprecationWarning):
-            ssl.PROTOCOL_SSLv3 
-
-    def test_py3k_protocols_sslv3(self):
-        expected = "ssl.PROTOCOL_SSLv2 is not supported in some 3.x versions: use ssl.PROTOCOL_SSLv23 instead"
-        with test_support.check_py3k_warnings(expected, DeprecationWarning):
-            ssl.PROTOCOL_SSLv2
 
 
 def can_clear_options():

@@ -3,6 +3,7 @@
 import test.test_support
 from test.test_support import verbose, cpython_only, check_py3k_warnings
 from test.script_helper import assert_python_ok
+import warnings
 
 import random
 import re
@@ -482,18 +483,21 @@ class ThreadTests(BaseTestCase):
 
     def test_threading_module_method_rename(self):
         import threading
-        expected = "_get_ident is removed in 3.x: use get_ident instead"
-        with check_py3k_warnings() as w:
-           threading. _get_ident()
-        expected = "_start_new_thread is removed in 3.x: use start_new_thread instead"
-        with check_py3k_warnings() as w:
-            def f():
-                ident.append(threading.currentThread().ident)
-                done.set()
-            threading._start_new_thread((f), ())
-        expected = "_allocate_lock is removed in 3.x: use allocate_lock instead"
-        with check_py3k_warnings() as w:
-           threading._allocate_lock()
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                threading. _get_ident()
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                def f():
+                    ident.append(threading.currentThread().ident)
+                    done.set()
+                threading._start_new_thread((f), ())
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                threading._allocate_lock()
 
 class ThreadJoinOnShutdown(BaseTestCase):
 

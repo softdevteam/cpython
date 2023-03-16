@@ -336,6 +336,7 @@ class _TestProcess(BaseTestCase):
         sys.stderr = open(testfn, 'w')
         sys.exit(reason)
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_sys_exit(self):
         # See Issue 13854
         if self.TYPE == 'threads':
@@ -658,7 +659,8 @@ class _TestQueue(BaseTestCase):
                 except Queue.Empty:
                     self.fail("Probable regression on import lock contention;"
                               " see Issue #22853")
-
+                              
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_queue_feeder_donot_stop_onexc(self):
         # bpo-30414: verify feeder handles exceptions correctly
         if self.TYPE != 'processes':

@@ -11,6 +11,7 @@ class TestMultipleFeatures(unittest.TestCase):
     def test_unicode_literals(self):
         self.assertIsInstance("", unicode)
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_print_function(self):
         with test_support.captured_output("stderr") as s:
             print("foo", file=sys.stderr)

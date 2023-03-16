@@ -149,14 +149,6 @@ PyDoc_STRVAR(excepthook_doc,
 static PyObject *
 sys_exc_info(PyObject *self, PyObject *noargs)
 {
-    if (Py_Py3kWarningFlag) {
-        if (PyErr_WarnExplicit_WithFix(PyExc_Py3xWarning, 
-                                      "sys.exc_info() not supported in 3.x", 
-                                      "use except clauses", NULL, NULL, 
-                                      NULL, NULL)) {
-            return NULL;
-        }
-    }
     PyThreadState *tstate;
     tstate = PyThreadState_GET();
     return Py_BuildValue(

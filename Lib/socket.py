@@ -45,13 +45,9 @@ the setsockopt() and getsockopt() methods.
 """
 
 import _socket
-import warnings
 from _socket import *
 from functools import partial
 from types import MethodType
-
-warnings.warnpy3k_with_fix("socket.sslerror is not supported in 3.x", 
-"use from _ssl import SSLError as sslerror", stacklevel=2)
 
 try:
     import _ssl
@@ -63,8 +59,8 @@ else:
         # we do an internal import here because the ssl
         # module imports the socket module
         import ssl as _realssl
-        warnings.warnpy3k_with_fix("socket.ssl() is removed in 3.x", "use ssl.wrap_socket() instead.",
-                      stacklevel=2)
+        warnings.warn("socket.ssl() is deprecated.  Use ssl.wrap_socket() instead.",
+                      DeprecationWarning, stacklevel=2)
         return _realssl.sslwrap_simple(sock, keyfile, certfile)
 
     # we need to import the same constants we used to...
@@ -87,7 +83,7 @@ else:
         # LibreSSL does not provide RAND_egd
         pass
 
-import os, sys
+import os, sys, warnings
 
 try:
     from cStringIO import StringIO

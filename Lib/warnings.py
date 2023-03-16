@@ -23,7 +23,7 @@ def warnpy3k(message, category=None, stacklevel=1):
             category = DeprecationWarning
         warn(message, category, stacklevel+1)
 
-def warnpy3k_with_fix(message, fix, category=None, stacklevel=1):
+def warnpy3k_with_fix(message, category=None, stacklevel=1):
     """Issue a deprecation warning for Python 3.x related changes and a fix.
 
     Warnings are omitted unless Python is started with the -3 option.

@@ -1115,9 +1115,11 @@ class POSIXProcessTestCase(BaseTestCase):
     def test_close_fds_0_1(self):
         self.check_close_std_fds([0, 1])
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_close_fds_0_2(self):
         self.check_close_std_fds([0, 2])
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_close_fds_1_2(self):
         self.check_close_std_fds([1, 2])
 
@@ -1176,6 +1178,7 @@ class POSIXProcessTestCase(BaseTestCase):
     # When duping fds, if there arises a situation where one of the fds is
     # either 0, 1 or 2, it is possible that it is overwritten (#12607).
     # This tests all combinations of this.
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_swap_fds(self):
         self.check_swap_fds(0, 1, 2)
         self.check_swap_fds(0, 2, 1)

@@ -262,7 +262,7 @@ class DebuggerTests(unittest.TestCase):
 
     def assertEndsWith(self, actual, exp_end):
         '''Ensure that the given "actual" string ends with "exp_end"'''
-        self.assertFalse(actual.endswith(exp_end),
+        self.assertTrue(actual.endswith(exp_end),
                         msg='%r did not end with %r' % (actual, exp_end))
 
     def assertMultilineMatches(self, actual, pattern):
@@ -724,7 +724,7 @@ $''')
         bt = self.get_stack_trace(script=self.get_sample_script(),
                                   cmds_after_breakpoint=['py-down'])
         self.assertEndsWith(bt,
-                            'Unable to locate python frame\n')
+                            'Unable to find a newer python frame\n')
 
     @unittest.skipUnless(HAS_PYUP_PYDOWN, "test requires py-up/py-down commands")
     @unittest.skipIf(python_is_optimized(),

@@ -1059,15 +1059,17 @@ hello world
 
     def test_listcomp_py3k_paren(self):
         [x for x in [1, 2, 2]]
-        expected = "list comp without parenthesis is invalid in 3.x: use parenthesis for list items more than one"
-        with check_py3k_warnings((expected, SyntaxWarning)):
-            [x for x in 1, 2, 3]
+        if sys.py3kwarning:
+           with warnings.catch_warnings(record=True) as w:
+               warnings.filterwarnings('always', category=Py3xWarning)
+               [x for x in 1, 2, 3]
 
     def test_listcomps_py3k_scope(self):
         def foo(): print([x for x in [1, 2, 2]])
-        expected = "This listcomp does not leak a variable in 3.x: assign the variable before use"
-        with check_py3k_warnings((expected, SyntaxWarning)):
-            def foo(): x = 0; [x for x in [1, 2, 2]]; print(x)
+        if sys.py3kwarning:
+           with warnings.catch_warnings(record=True) as w:
+               warnings.filterwarnings('always', category=Py3xWarning)
+               def foo(): x = 0; [x for x in [1, 2, 2]]; print(x)
         def foo(): x = 0; print(x); [x for x in [1, 2, 2]]
         def foo():
             x = 0

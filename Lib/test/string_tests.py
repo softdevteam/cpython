@@ -5,6 +5,7 @@ Common tests shared by test_str, test_unicode, test_userstring and test_string.
 import unittest, string, sys, struct
 from test import test_support
 from UserList import UserList
+import warnings
 
 class Sequence:
     def __init__(self, seq='wxyz'): self.seq = seq
@@ -1058,6 +1059,24 @@ class MixinStrUnicodeUserStringTest(NonStringModuleTest):
 
         self.checkraises(TypeError, 'abc', '__getslice__', 'def')
 
+    def test_py3x_warnings_isinstance(self):
+       if sys.py3kwarning:
+           with warnings.catch_warnings(record=True) as w:
+               warnings.filterwarnings('always', category=Py3xWarning)
+               isinstance(u"fix", basestring)
+               isinstance(b"fix", basestring)
+               isinstance("fix", basestring)
+
+    def test_py3x_warnings_join(self):
+        if sys.py3kwarning:
+           with warnings.catch_warnings(record=True) as w:
+               warnings.filterwarnings('always', category=Py3xWarning)
+               x = 'foo'
+               y = b'foo'
+               z = x + y
+               b = y + x
+               v = x.__add__(y)
+
     def test_extended_getslice(self):
         # Test extended slicing by comparing with list slicing.
         s = string.ascii_letters + string.digits
@@ -1080,24 +1099,6 @@ class MixinStrUnicodeUserStringTest(NonStringModuleTest):
         # XXX: on a 64-bit system, this doesn't raise an overflow error,
         # but either raises a MemoryError, or succeeds (if you have 54TiB)
         #self.checkraises(OverflowError, 10000*'abc', '__mul__', 2000000000)
-
-    def test_py3x_warnings_isinstance(self):
-        with test_support.check_py3k_warnings(("the basestring type is not supported in 3.x: "
-                                               "import a third party library like six and use"
-                                               "a compatible type like string_types", Py3xWarning)):
-            isinstance(u"fix", basestring)
-            isinstance(b"fix", basestring)
-            isinstance("fix", basestring)
-
-    def test_py3x_warnings_join(self):
-        with test_support.check_py3k_warnings(("mixed bytes, str and unicode operands cannot "
-                                               "be used in string concatenation in Python 3.x: "
-                                               "convert the operand(s) so that they are the same type.", Py3xWarning)):
-            x = 'foo'
-            y = b'foo'
-            z = x + y
-            b = y + x
-            v = x.__add__(y)
 
     def test_join(self):
         # join now works with any sequence type

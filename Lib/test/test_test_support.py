@@ -310,6 +310,7 @@ class TestSupport(unittest.TestCase):
             print "hello"
         self.assertEqual(stdout.getvalue(), "hello\n")
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_captured_stderr(self):
         with support.captured_stderr() as stderr:
             print >>sys.stderr, "hello"

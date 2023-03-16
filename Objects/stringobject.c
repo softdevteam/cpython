@@ -1031,7 +1031,7 @@ string_concat(register PyStringObject *a, register PyObject *bb)
     register PyStringObject *op;
     if (a->ob_type != bb->ob_type) {
         char msgbuf[256];
-        sprintf(msgbuf, "the first string is '%.200s' while the second is '%.200s': "\
+        sprintf(msgbuf, "The first string is '%.200s' while the second is '%.200s': "\
                 "mixed bytes, str and unicode operands cannot be used in string concatenation in Python 3.x", 
                 Py_TYPE(a)->tp_name, Py_TYPE(bb)->tp_name);
         char *fix = "convert the operand(s) so that they are the same type.";

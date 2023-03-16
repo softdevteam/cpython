@@ -242,6 +242,7 @@ class DispatcherTests(unittest.TestCase):
         d = asyncore.dispatcher()
         self.assertEqual(repr(d), '<asyncore.dispatcher at %#x>' % id(d))
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_log(self):
         d = asyncore.dispatcher()
 

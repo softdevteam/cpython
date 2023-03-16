@@ -146,8 +146,6 @@ ast_3x_warn(struct compiling *c, const node *n, char *msg, char *fix)
 static int
 forbidden_check(struct compiling *c, const node *n, const char *x)
 {
-    Py_ssize_t len;
-
     if (!strcmp(x, "None"))
         return ast_error(n, "cannot assign to None");
     if (!strcmp(x, "__debug__"))
@@ -158,19 +156,6 @@ forbidden_check(struct compiling *c, const node *n, const char *x)
             return 0;
         if (!strcmp(x, "nonlocal") &&
             !ast_warn(c, n, "nonlocal is a keyword in 3.x"))
-            return 0;
-        len = PyString_Size(x);
-        if (strncmp(x + (len-7), ".keys()", 7) == 0 &&
-            !ast_3x_warn(c, n, "dict.keys() returns a view in 3.x", "convert the result to a list"))
-            return 0;
-        if (strncmp(x + (len-8), ".items()", 8) == 0 &&
-            !ast_3x_warn(c, n, "dict.items() returns a view in 3.x", "convert the result to a list"))
-            return 0;
-        if (strncmp(x + (len-8), ".values()", 8) == 0 &&
-            !ast_3x_warn(c, n, "dict.values() returns a view in 3.x", "convert the result to a list"))
-            return 0;
-        if (strncmp(x, "range(", 6) &&
-            !ast_3x_warn(c, n, "range() returns a view in 3.x", "convert the result to a list"))
             return 0;
     }
     return 1;
