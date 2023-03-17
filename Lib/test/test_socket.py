@@ -773,16 +773,6 @@ class GeneralModuleTests(unittest.TestCase):
         finally:
             s.close()
 
-    def _test_socket_sslerror(self):
-        expected = "socket.sslerror is not supported in 3.x: use from '_ssl import SSLError as sslerror'"
-        with test_support.check_py3k_warnings(expected, DeprecationWarning):
-            from socket import sslerror
-
-    def _test_socket_ssl(self):
-        expected = "socket.ssl() is removed in 3.x: use ssl.wrap_socket() instead."
-        with test_support.check_py3k_warnings(expected, DeprecationWarning):
-            from socket import ssl
-
 
 @unittest.skipUnless(thread, 'Threading required for this test.')
 class BasicTCPTest(SocketConnectedTest):

@@ -4870,11 +4870,7 @@ cmp_outcome(int op, register PyObject *v, register PyObject *w)
                         CANNOT_CATCH_MSG, 1);
                     if (ret_val < 0)
                         return NULL;
-                    if (PyErr_WarnEx(PyExc_DeprecationWarning,
-                        "Iterable exceptions are not supported in 3.x"
-                        "access the arguments through the 'args' attribute instead", 1) < 0)
-                            return NULL;
-                    }
+                }
             }
         }
         else {

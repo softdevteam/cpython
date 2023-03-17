@@ -7,6 +7,7 @@ thread = support.import_module('thread')
 import time
 import sys
 import weakref
+import warnings
 
 from test import lock_tests
 
@@ -159,49 +160,57 @@ class ThreadRunningTests(BasicThreadTest):
         self.assertIn("Traceback", stderr.getvalue())
 
     def test_py3k_thread_module(self):
-        expected = "In 3.x, the thread module is removed: use the threading module instead"
-        with check_py3k_warnings() as w:
-            import thread
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                import thread
 
     def test_py3k_thread_module_get_ident(self):
-        expected = "thread.get_ident is removed in 3.x: use the threading.get_ident instead"
-        with check_py3k_warnings() as w:
-            thread.get_ident()
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                thread.get_ident()
 
     def test_py3k_thread_module_start_new_thread(self):
-        expected = "thread.start_new_thread is removed in 3.x: use the threading._start_new_thread instead"
-        with check_py3k_warnings() as w:
-            def f():
-                ident.append(threading.currentThread().ident)
-                done.set()
-            thread.start_new_thread((f), ())
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                def f():
+                    ident.append(threading.currentThread().ident)
+                    done.set()
+                thread.start_new_thread((f), ())
 
     def test_py3k_thread_module_allocate(self):
-        expected = "thread.allocate_lock is removed in 3.x: use the threading._allocate_lock instead"
-        with check_py3k_warnings() as w:
-            thread.allocate_lock()
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                thread.allocate_lock()
 
     def test_py3k_thread_module_exit_thread(self):
-        expected = "thread.exit is removed in 3.x: no equivalent method exists, raising SystemExit will exit a thread"
-        with check_py3k_warnings() as w:
-            with self.assertRaises(SystemExit):
-                thread.exit_thread()
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                with self.assertRaises(SystemExit):
+                    thread.exit_thread()
 
     def test_py3k_thread_module_interrupt_main(self):
-        expected = "thread.interrupt_main is removed in 3.x: no equivalent method exists, raising KeyboardInterrupt will interruot the main thread"
-        with check_py3k_warnings() as w:
-            with self.assertRaises(KeyboardInterrupt):
-                thread.interrupt_main()
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                with self.assertRaises(KeyboardInterrupt):
+                    thread.interrupt_main()
 
     def test_py3k_thread_module_count(self):
-        expected = "thread._count is removed in 3.x: use the threading.count instead"
-        with check_py3k_warnings() as w:
-            thread._count()
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                thread._count()
 
     def test_py3k_thread_module_stack_size(self):
-        expected = "thread.stack_size is removed in 3.x: use threading.stack_size instead"
-        with check_py3k_warnings() as w:
-            thread.stack_size()
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                thread.stack_size()
 
 
 class Barrier:

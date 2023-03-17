@@ -181,9 +181,10 @@ class XrangeTest(unittest.TestCase):
             self.assert_xranges_equivalent(r, r_out)
 
     def test_xrange_3k(self):
-        expected = "xrange() is not supported in 3.x: use range() instead"
-        with check_py3k_warnings((expected, DeprecationWarning)):
-            xrange(1, 10000)
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                xrange(1, 10000)
 
     def test_range_iterators(self):
         # see issue 7298

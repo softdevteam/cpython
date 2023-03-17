@@ -2,6 +2,7 @@ import unittest
 from test import test_support
 import base64
 import sys
+import warnings
 
 
 

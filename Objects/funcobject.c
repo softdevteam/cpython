@@ -157,8 +157,14 @@ PyFunction_SetClosure(PyObject *op, PyObject *closure)
 #define OFF(x) offsetof(PyFunctionObject, x)
 
 static PyMemberDef func_memberlist[] = {
-    {"__closure__",  T_OBJECT,      OFF(func_closure), RESTRICTED|READONLY},
+    {"func_closure",  T_OBJECT,     OFF(func_closure),
+     RESTRICTED|READONLY},
+    {"__closure__",  T_OBJECT,      OFF(func_closure),
+     RESTRICTED|READONLY},
+    {"func_doc",      T_OBJECT,     OFF(func_doc), PY_WRITE_RESTRICTED},
     {"__doc__",       T_OBJECT,     OFF(func_doc), PY_WRITE_RESTRICTED},
+    {"func_globals",  T_OBJECT,     OFF(func_globals),
+     RESTRICTED|READONLY},
     {"__globals__",  T_OBJECT,      OFF(func_globals),
      RESTRICTED|READONLY},
     {"__module__",    T_OBJECT,     OFF(func_module), PY_WRITE_RESTRICTED},
@@ -176,7 +182,7 @@ restricted(void)
 }
 
 static PyObject *
-get_dict(PyFunctionObject *op)
+func_get_dict(PyFunctionObject *op)
 {
     if (restricted())
         return NULL;
@@ -190,7 +196,7 @@ get_dict(PyFunctionObject *op)
 }
 
 static int
-set_dict(PyFunctionObject *op, PyObject *value)
+func_set_dict(PyFunctionObject *op, PyObject *value)
 {
     PyObject *tmp;
 
@@ -216,25 +222,7 @@ set_dict(PyFunctionObject *op, PyObject *value)
 }
 
 static PyObject *
-func_get_dict(PyFunctionObject *op)
-{
-    if (PyErr_WarnPy3k_WithFix("The attribute func_dict is not supported in 3.x, ",
-                                "use '__dict__' instead", 1) < 0)
-        return -1;
-    return get_dict(op);
-}
-
-static int
-func_set_dict(PyFunctionObject *op, PyObject *value)
-{
-    if (PyErr_WarnPy3k_WithFix("The attribute func_dict is not supported in 3.x, ",
-                                "use '__dict__' instead", 1) < 0)
-        return -1;
-    return set_dict(op, value);
-}
-
-static PyObject *
-get_code(PyFunctionObject *op)
+func_get_code(PyFunctionObject *op)
 {
     if (restricted())
         return NULL;
@@ -243,7 +231,7 @@ get_code(PyFunctionObject *op)
 }
 
 static int
-set_code(PyFunctionObject *op, PyObject *value)
+func_set_code(PyFunctionObject *op, PyObject *value)
 {
     PyObject *tmp;
     Py_ssize_t nfree, nclosure;
@@ -276,32 +264,14 @@ set_code(PyFunctionObject *op, PyObject *value)
 }
 
 static PyObject *
-func_get_code(PyFunctionObject *op)
-{
-    if (PyErr_WarnPy3k_WithFix("The attribute func_code is not supported in 3.x, ",
-                                "use '__code__' instead", 1) < 0)
-        return -1;
-    return get_code(op);
-}
-
-static int
-func_set_code(PyFunctionObject *op, PyObject *value)
-{
-    if (PyErr_WarnPy3k_WithFix("The attribute func_code is not supported in 3.x, ",
-                                "use '__code__' instead", 1) < 0)
-        return -1;
-    return set_code(op, value);
-}
-
-static PyObject *
-get_name(PyFunctionObject *op)
+func_get_name(PyFunctionObject *op)
 {
     Py_INCREF(op->func_name);
     return op->func_name;
 }
 
 static int
-set_name(PyFunctionObject *op, PyObject *value)
+func_set_name(PyFunctionObject *op, PyObject *value)
 {
     PyObject *tmp;
 
@@ -322,25 +292,7 @@ set_name(PyFunctionObject *op, PyObject *value)
 }
 
 static PyObject *
-func_get_name(PyFunctionObject *op)
-{
-    if (PyErr_WarnPy3k_WithFix("The attribute func_name is not supported in 3.x, ",
-                                "use '__name__' instead", 1) < 0)
-        return NULL;
-    return get_name(op);
-}
-
-static int
-func_set_name(PyFunctionObject *op, PyObject *value)
-{
-    if (PyErr_WarnPy3k_WithFix("The attribute func_name is not supported in 3.x, ",
-                       "use '__name__' instead", 1) < 0)
-        return -1;
-    return set_name(op, value);
-}
-
-static PyObject *
-get_defaults(PyFunctionObject *op)
+func_get_defaults(PyFunctionObject *op)
 {
     if (restricted())
         return NULL;
@@ -353,7 +305,7 @@ get_defaults(PyFunctionObject *op)
 }
 
 static int
-set_defaults(PyFunctionObject *op, PyObject *value)
+func_set_defaults(PyFunctionObject *op, PyObject *value)
 {
     PyObject *tmp;
 
@@ -375,86 +327,17 @@ set_defaults(PyFunctionObject *op, PyObject *value)
     return 0;
 }
 
-static PyObject *
-func_get_defaults(PyFunctionObject *op)
-{
-    if (PyErr_WarnPy3k_WithFix("The attribute func_defaults is not supported in 3.x, ",
-                                "use '__defaults__' instead", 1) < 0)
-        return NULL;
-    return get_defaults(op);
-}
-
-static int
-func_set_defaults(PyFunctionObject *op, PyObject *value)
-{
-    if (PyErr_WarnPy3k_WithFix("The attribute func_defaults is not supported in 3.x, ",
-                                "use '__defaults__' instead", 1) < 0)
-        return -1;
-    return set_defaults(op, value);
-}
-
-static PyObject *
-func_get_closure(PyFunctionObject *op)
-{
-    if (PyErr_WarnPy3k_WithFix("The attribute func_closure is not supported in 3.x, ",
-                               "use '__closure__' instead", 1) < 0)
-        return NULL;
-    if (restricted())
-        return NULL;
-    if (op->func_closure == NULL) {
-        Py_INCREF(Py_None);
-        return Py_None;
-    }
-    Py_INCREF(op->func_closure);
-    return op->func_closure;
-}
-
-static PyObject *
-func_get_doc(PyFunctionObject *op)
-{
-    if (PyErr_WarnPy3k_WithFix("The attribute func_doc is not supported in 3.x, ",
-                               "use '__doc__' instead", 1) < 0)
-        return NULL;
-    if (restricted())
-        return NULL;
-    if (op->func_doc == NULL) {
-        Py_INCREF(Py_None);
-        return Py_None;
-    }
-    Py_INCREF(op->func_doc);
-    return op->func_doc;
-}
-
-static PyObject *
-func_get_globals(PyFunctionObject *op)
-{
-    if (PyErr_WarnPy3k_WithFix("The attribute func_globals is not supported in 3.x, ",
-                               "use '__globals__' instead", 1) < 0)
-        return NULL;
-    if (restricted())
-        return NULL;
-    if (op->func_globals == NULL) {
-        Py_INCREF(Py_None);
-        return Py_None;
-    }
-    Py_INCREF(op->func_globals);
-    return op->func_globals;
-}
-
 static PyGetSetDef func_getsetlist[] = {
     {"func_code", (getter)func_get_code, (setter)func_set_code},
-    {"__code__", (getter)get_code, (setter)set_code},
+    {"__code__", (getter)func_get_code, (setter)func_set_code},
     {"func_defaults", (getter)func_get_defaults,
      (setter)func_set_defaults},
-    {"__defaults__", (getter)get_defaults,
-     (setter)set_defaults},
+    {"__defaults__", (getter)func_get_defaults,
+     (setter)func_set_defaults},
     {"func_dict", (getter)func_get_dict, (setter)func_set_dict},
-    {"__dict__", (getter)get_dict, (setter)set_dict},
+    {"__dict__", (getter)func_get_dict, (setter)func_set_dict},
     {"func_name", (getter)func_get_name, (setter)func_set_name},
-    {"__name__", (getter)get_name, (setter)set_name},
-    {"func_closure", (getter)func_get_closure},
-    {"func_doc", (getter)func_get_doc},
-    {"func_globals", (getter)func_get_globals},
+    {"__name__", (getter)func_get_name, (setter)func_set_name},
     {NULL} /* Sentinel */
 };
 

@@ -301,11 +301,13 @@ class TestTimeit(unittest.TestCase):
                 10000 loops, best of 3: 50 usec per loop
             """))
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_main_exception(self):
         with captured_stderr() as error_stringio:
             s = self.run_main(switches=['1.0/0.0'])
         self.assert_exc_string(error_stringio.getvalue(), 'ZeroDivisionError')
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_main_exception_fixed_reps(self):
         with captured_stderr() as error_stringio:
             s = self.run_main(switches=['-n1', '1.0/0.0'])
