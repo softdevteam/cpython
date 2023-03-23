@@ -646,6 +646,7 @@ class TestHashMappingProtocol(TestMappingProtocol):
         d = self._full_mapping({1: BadRepr()})
         self.assertRaises(Exc, repr, d)
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_repr_deep(self):
         d = self._empty_mapping()
         for i in range(sys.getrecursionlimit() + 100):

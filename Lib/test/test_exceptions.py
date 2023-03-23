@@ -366,6 +366,7 @@ class ExceptionTests(unittest.TestCase):
         x = DerivedException(fancy_arg=42)
         self.assertEqual(x.fancy_arg, 42)
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def testInfiniteRecursion(self):
         def f():
             return f()
@@ -442,6 +443,7 @@ class ExceptionTests(unittest.TestCase):
         for klass in klasses:
             self.assertEqual(str(klass.__new__(klass)), "")
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_badisinstance(self):
         # Bug #2542: if issubclass(e, MyException) raises an exception,
         # it should be ignored

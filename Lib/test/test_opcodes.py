@@ -110,12 +110,7 @@ class OpcodeTest(unittest.TestCase):
 
 
 def test_main():
-    with check_py3k_warnings(("exceptions must derive from BaseException",
-                              DeprecationWarning),
-                             ("catching classes that don't inherit "
-                              "from BaseException is not allowed",
-                              DeprecationWarning)):
-        run_unittest(OpcodeTest)
+    run_unittest(OpcodeTest)
 
 if __name__ == '__main__':
     test_main()

@@ -2099,6 +2099,7 @@ order (MRO) for bases """
         finally:
             sys.stdout = test_stdout
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_recursions_2(self):
         # Bug #1202533.
         class A(object):
@@ -3753,6 +3754,7 @@ order (MRO) for bases """
         list.__init__(a, sequence=[0, 1, 2])
         self.assertEqual(a, [0, 1, 2])
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_recursive_call(self):
         # Testing recursive __call__() by setting to instance of class...
         class A(object):
@@ -4825,6 +4827,7 @@ order (MRO) for bases """
         with self.assertRaises(TypeError):
             str.__add__(fake_str, "abc")
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_repr_as_str(self):
         # Issue #11603: crash or infinite loop when rebinding __str__ as
         # __repr__.

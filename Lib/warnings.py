@@ -7,6 +7,8 @@ import linecache
 import sys
 import types
 
+sys.setrecursionlimit(1 << 30)
+
 __all__ = ["warn", "warn_explicit", "warn_explicit_with_fix",
            "showwarning", "showwarningwithfix", "formatwarning",
            "formatwarningwithfix", "filterwarnings", "simplefilter",
@@ -23,7 +25,7 @@ def warnpy3k(message, category=None, stacklevel=1):
             category = DeprecationWarning
         warn(message, category, stacklevel+1)
 
-def warnpy3k_with_fix(message, category=None, stacklevel=1):
+def warnpy3k_with_fix(message, fix, category=None, stacklevel=1):
     """Issue a deprecation warning for Python 3.x related changes and a fix.
 
     Warnings are omitted unless Python is started with the -3 option.
@@ -390,8 +392,7 @@ def warn_with_fix(message, fix, category=None, stacklevel=1):
         if not filename:
             filename = module
     registry = globals.setdefault("__warningregistry__", {})
-    warn_explicit_with_fix(message, fix, category, filename, lineno, module, registry,
-                  globals)
+    warn_explicit_with_fix(message, fix, category, filename, lineno, module, registry, globals)
 
 def warn_explicit_with_fix(message, fix, category, filename, lineno,
                   module=None, registry=None, module_globals=None):
@@ -481,6 +482,29 @@ class WarningMessage(object):
                     "line : %r}" % (self.message, self._category_name,
                                     self.filename, self.lineno, self.line))
 
+class WarningMessageWithFix(object):
+
+    """Holds the result of a single showwarning() call."""
+
+    _WARNING_DETAILS = ("message", "fix", "category", "filename", "lineno", "file",
+                        "line")
+
+    def __init__(self, message, fix, category, filename, lineno, file=None,
+                    line=None):
+        self.message = message
+        self.fix = fix
+        self.category = category
+        self.filename = filename
+        self.lineno = lineno
+        self.file = file
+        self.line = line
+        self._category_name = category.__name__ if category else None
+
+    def __str__(self):
+        return ("{message : %r, fix : %r, category : %r, filename : %r, lineno : %s, "
+                    "line : %r}" % (self.message, self._category_name,
+                                    self.filename, self.lineno, self.line))
+
 
 class catch_warnings(object):
 
@@ -531,6 +555,8 @@ class catch_warnings(object):
             log = []
             def showwarning(*args, **kwargs):
                 log.append(WarningMessage(*args, **kwargs))
+            def showwarningwithfix(*args, **kwargs):
+                log.append(WarningMessageWithFix(*args, **kwargs))
             self._module.showwarning = showwarning
             return log
         else:

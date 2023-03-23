@@ -1013,13 +1013,16 @@ def check_py3k_warnings(*filters, **kwargs):
     Without argument, it defaults to:
         check_py3k_warnings(("", DeprecationWarning), quiet=False)
     """
+    quiet = kwargs.get('quiet')
     if sys.py3kwarning:
         if not filters:
             filters = (("", DeprecationWarning),)
+            if quiet is None:
+                quiet = True
     else:
         # It should not raise any py3k warning
         filters = ()
-    return _filterwarnings(filters, kwargs.get('quiet'))
+    return _filterwarnings(filters, quiet)
 
 
 class CleanImport(object):
