@@ -4,6 +4,9 @@ import unittest, sys
 
 from test import test_support
 
+if sys.py3kwarning:
+    sys.setrecursionlimit(1 << 30)
+    
 testmeths = [
 
 # Binary operations

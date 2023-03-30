@@ -7,7 +7,7 @@ import linecache
 import sys
 import types
 
-sys.setrecursionlimit(1 << 30)
+# sys.setrecursionlimit(1 << 30)
 
 __all__ = ["warn", "warn_explicit", "warn_explicit_with_fix",
            "showwarning", "showwarningwithfix", "formatwarning",

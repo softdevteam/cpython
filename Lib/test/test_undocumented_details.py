@@ -1,6 +1,10 @@
 from test.test_support import run_unittest, check_py3k_warnings
 import unittest
+import sys
 
+if sys.py3kwarning:
+    sys.setrecursionlimit(1 << 30)
+    
 class TestImplementationComparisons(unittest.TestCase):
 
     def test_type_comparisons(self):

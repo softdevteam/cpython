@@ -10,6 +10,10 @@ import weakref
 
 from copy import deepcopy
 from test import test_support
+import sys
+
+if sys.py3kwarning:
+    sys.setrecursionlimit(1 << 30)
 
 
 def func(*args):

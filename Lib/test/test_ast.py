@@ -2,6 +2,9 @@ import sys, itertools, unittest
 from test import test_support
 import ast
 
+if sys.py3kwarning:
+    sys.setrecursionlimit(1 << 30)
+
 def to_tuple(t):
     if t is None or isinstance(t, (basestring, int, long, complex)):
         return t

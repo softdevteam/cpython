@@ -11,6 +11,9 @@ import unittest
 import warnings
 from test import test_support
 
+if sys.py3kwarning:
+    sys.setrecursionlimit(1 << 30)
+
 class BufferTests(unittest.TestCase):
 
     def test_extended_getslice(self):

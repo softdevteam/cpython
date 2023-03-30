@@ -3,6 +3,9 @@ import sys
 import unittest
 from test.test_support import run_unittest, TestFailed, check_warnings
 
+if sys.py3kwarning:
+    sys.setrecursionlimit(1 << 30)
+
 
 # Fake a number that implements numeric methods through __coerce__
 class CoerceNumber:
