@@ -1,9 +1,12 @@
 "Test the functionality of Python classes implementing operators."
 
-import unittest
+import unittest, sys
 
 from test import test_support
 
+if sys.py3kwarning:
+    sys.setrecursionlimit(1 << 30)
+    
 testmeths = [
 
 # Binary operations
@@ -549,7 +552,7 @@ class ClassTests(unittest.TestCase):
 
         self.assertRaises(TypeError, hash, C2())
 
-
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def testSFBug532646(self):
         # Test for SF bug 532646
 

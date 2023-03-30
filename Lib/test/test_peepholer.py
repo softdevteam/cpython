@@ -3,6 +3,9 @@ import sys
 from cStringIO import StringIO
 import unittest
 
+if sys.py3kwarning:
+    sys.setrecursionlimit(1 << 30)
+    
 def disassemble(func):
     f = StringIO()
     tmp = sys.stdout

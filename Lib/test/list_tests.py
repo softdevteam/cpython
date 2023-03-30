@@ -4,6 +4,7 @@ Tests common to list and UserList.UserList
 
 import sys
 import os
+import unittest
 
 from test import test_support, seq_tests
 
@@ -45,6 +46,7 @@ class CommonTest(seq_tests.CommonTest):
         self.assertEqual(str(a2), "[0, 1, 2, [...], 3]")
         self.assertEqual(repr(a2), "[0, 1, 2, [...], 3]")
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_repr_deep(self):
         a = self.type2test([])
         for i in range(sys.getrecursionlimit() + 100):

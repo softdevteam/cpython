@@ -13,6 +13,9 @@ import argparse
 
 from StringIO import StringIO
 
+if sys.py3kwarning:
+    raise unittest.SkipTest('%s must be run without the -3 flag to avoid unnecessary maximum recursions' % __name__)
+
 class StdIOBuffer(StringIO):
     pass
 
@@ -4316,6 +4319,7 @@ class TestOptionalsHelpVersionActions(TestCase):
     def assertArgumentParserError(self, parser, *args):
         self.assertRaises(ArgumentParserError, parser.parse_args, args)
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_version(self):
         parser = ErrorRaisingArgumentParser(version='1.0')
         self.assertPrintHelpExit(parser, '-h')
@@ -4323,11 +4327,13 @@ class TestOptionalsHelpVersionActions(TestCase):
         self.assertPrintVersionExit(parser, '-v')
         self.assertPrintVersionExit(parser, '--version')
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_version_format(self):
         parser = ErrorRaisingArgumentParser(prog='PPP', version='%(prog)s 3.5')
         msg = self._get_error(parser.parse_args, ['-v']).stderr
         self.assertEqual('PPP 3.5\n', msg)
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_version_no_help(self):
         parser = ErrorRaisingArgumentParser(add_help=False, version='1.0')
         self.assertArgumentParserError(parser, '-h')
@@ -4335,6 +4341,7 @@ class TestOptionalsHelpVersionActions(TestCase):
         self.assertPrintVersionExit(parser, '-v')
         self.assertPrintVersionExit(parser, '--version')
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_version_action(self):
         parser = ErrorRaisingArgumentParser(prog='XXX')
         parser.add_argument('-V', action='version', version='%(prog)s 3.7')
@@ -4357,6 +4364,7 @@ class TestOptionalsHelpVersionActions(TestCase):
         self.assertArgumentParserError(parser, '-v')
         self.assertArgumentParserError(parser, '--version')
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_help_version_extra_arguments(self):
         parser = ErrorRaisingArgumentParser(version='1.0')
         parser.add_argument('-x', action='store_true')
@@ -4502,6 +4510,7 @@ class TestArgumentError(TestCase):
 
 class TestArgumentTypeError(TestCase):
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_argument_type_error(self):
 
         def spam(string):

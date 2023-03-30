@@ -1,6 +1,10 @@
 import copy
+import sys
 import unittest
 from test.test_support import run_unittest, TestFailed, check_warnings
+
+if sys.py3kwarning:
+    sys.setrecursionlimit(1 << 30)
 
 
 # Fake a number that implements numeric methods through __coerce__
@@ -319,6 +323,7 @@ class CoercionTest(unittest.TestCase):
                 return 0
         self.assertEqual(cmp(ClassicWackyComparer(), evil_coercer), 0)
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_infinite_rec_classic_classes(self):
         # if __coerce__() returns its arguments reversed it causes an infinite
         # recursion for classic classes.

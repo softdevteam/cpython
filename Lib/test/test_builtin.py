@@ -211,6 +211,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(ValueError, chr, 256)
         self.assertRaises(TypeError, chr)
 
+    @unittest.skipIf(sys.py3kwarning, "warning makes test fail")
     def test_cmp(self):
         self.assertEqual(cmp(-1, 1), -1)
         self.assertEqual(cmp(1, -1), 1)

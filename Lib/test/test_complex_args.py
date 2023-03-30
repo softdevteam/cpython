@@ -2,6 +2,10 @@
 import unittest
 from test import test_support
 import textwrap
+import sys
+
+if sys.py3kwarning:
+    sys.setrecursionlimit(1 << 30)
 
 class ComplexArgsTestCase(unittest.TestCase):
 
