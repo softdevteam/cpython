@@ -323,10 +323,6 @@ _PyFile_SanitizeMode(char *mode)
 static PyObject *
 open_the_file(PyFileObject *f, char *name, char *mode)
 {
-    if (PyErr_WarnPy3k_WithFix("The builtin 'file()'/'open()' function is not supported in 3.x, ",
-                       "use the 'io.open()' function instead with the encoding keyword argument", 1) < 0)
-        return NULL;
-
     char *newmode;
     assert(f != NULL);
     assert(PyFile_Check(f));
@@ -2421,6 +2417,10 @@ file_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static int
 file_init(PyObject *self, PyObject *args, PyObject *kwds)
 {
+    if (PyErr_WarnPy3k_WithFix("The builtin 'open()' function is not supported in 3.x, ",
+                       "use the 'io.open()' function instead with the encoding keyword argument", 1) < 0)
+        goto Error;
+
     PyFileObject *foself = (PyFileObject *)self;
     int ret = 0;
     static char *kwlist[] = {"name", "mode", "buffering", 0};

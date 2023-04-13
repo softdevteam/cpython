@@ -3,6 +3,10 @@ from test import test_support
 
 from random import random
 from math import atan2, isnan, copysign
+import sys
+
+if sys.py3kwarning:
+    sys.setrecursionlimit(1 << 30)
 
 INF = float("inf")
 NAN = float("nan")
