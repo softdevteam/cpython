@@ -2,7 +2,7 @@ import dis
 import sys
 from cStringIO import StringIO
 import unittest
-
+    
 def disassemble(func):
     f = StringIO()
     tmp = sys.stdout
