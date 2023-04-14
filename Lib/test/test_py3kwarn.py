@@ -283,6 +283,14 @@ class TestPy3KWarnings(unittest.TestCase):
             with check_py3k_warnings() as w:
                 self.assertWarning(f.xreadlines(), w, expected)
 
+    def test_bytesio_truncate(self):
+        from io import BytesIO
+        x = BytesIO(b'AAAAAA')
+        expected = "BytesIO.truncate() does not shift the file pointer: use seek(0) before doing truncate(0)"
+        self.assertWarning(x.truncate(0), w, expected)
+        w.reset()
+        self.assertNoWarning(x.truncate(-1), w)
+
     def test_file_open(self):
         expected = ("The builtin 'file()'/'open()' function is not supported in 3.x, "
                        "use the 'io.open()' function instead with the encoding keyword argument")
