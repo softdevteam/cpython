@@ -1504,11 +1504,6 @@ Return the octal representation of an integer or long integer.");
 static PyObject *
 builtin_open(PyObject *self, PyObject *args, PyObject *kwds)
 {
-    if (PyErr_WarnPy3k("The builtin 'open()' function is not supported in 3.x, "
-                       "use the 'io.open()' function instead with the encoding keyword argument", 1) < 0){
-        return NULL;
-    }
-
     return PyObject_Call((PyObject*)&PyFile_Type, args, kwds);
 }
 
