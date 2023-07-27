@@ -3718,6 +3718,10 @@ string_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     PyObject *x = NULL;
     static char *kwlist[] = {"object", 0};
 
+    if (PyErr_WarnPy3k_WithFix("the constructors of both 'str' and 'bytes' have different semantics in 3.x", 
+                                "use 'str' for unicode or 'bytes' for byte strings.", 1) < 0)
+        return NULL;
+
     if (type != &PyString_Type)
         return str_subtype_new(type, args, kwds);
     if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O:str", kwlist, &x))

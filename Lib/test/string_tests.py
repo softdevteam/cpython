@@ -1388,7 +1388,11 @@ class MixinStrUserStringTest:
         self.checkraises(TypeError, 'xyz', 'encode', 42)
 
         with test_support.check_py3k_warnings():
-            self.assertRaises(Py3xWarning, b"test".encode, "encoding Bytes is not supported in 3.x", "convert the byte string to unicode before encoding")
+            self.assertRaises(Py3xWarning, b"test".encode, "encoding Bytes is not supported in 3.x: convert the byte string to unicode before encoding")
+
+        with test_support.check_py3k_warnings():
+            self.assertRaises(Py3xWarning, str(3), "the constructors of both 'str' and 'bytes' have different semantics in 3.x: use 'str' for unicode or 'bytes' for byte strings.")
+            self.assertRaises(Py3xWarning, bytes(3), "the constructors of both 'str' and 'bytes' have different semantics in 3.x: use 'str' for unicode or 'bytes' for byte strings.")
 
 
 class MixinStrUnicodeTest:

@@ -8849,6 +8849,10 @@ unicode_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     char *encoding = NULL;
     char *errors = NULL;
 
+    if (PyErr_WarnPy3k_WithFix("the unicode constructor is not supported in 3.x", 
+                                "use 'str' for unicode instead.", 1) < 0)
+        return NULL;
+
     if (type != &PyUnicode_Type)
         return unicode_subtype_new(type, args, kwds);
     if (!PyArg_ParseTupleAndKeywords(args, kwds, "|Oss:unicode",

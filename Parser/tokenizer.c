@@ -1406,7 +1406,7 @@ tok_get(register struct tok_state *tok, char **p_start, char **p_end)
                                                 tok->filename, tok->lineno, NULL, NULL)) {
                         return NULL;
                     }
-                }
+                
 
             }
             if (c == '"' || c == '\'')
