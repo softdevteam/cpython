@@ -3024,6 +3024,10 @@ string_encode(PyStringObject *self, PyObject *args, PyObject *kwargs)
     char *errors = NULL;
     PyObject *v;
 
+    if (PyErr_WarnPy3k_WithFix("encoding Bytes is not supported in 3.x", 
+                                "convert the byte string to unicode before encoding", 1) < 0)
+        goto onError;
+
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|ss:encode",
                                      kwlist, &encoding, &errors))
         return NULL;

@@ -1043,6 +1043,8 @@ class UnicodeTest(
         with test_support.check_py3k_warnings():
             self.assertEqual(u'abcde'.decode('ascii', 'replace'),
                              u'abcde'.decode(encoding='ascii', errors='replace'))
+        with test_support.check_py3k_warnings():
+            self.assertRaises(Py3xWarning, u"test".decode, "decoding Unicode is not supported in 3.x: convert the unicode string to bytes before decoding.")
 
         # Error handling (unknown character names)
         self.assertEqual("\\N{foo}xx".decode("unicode-escape", "ignore"), u"xx")

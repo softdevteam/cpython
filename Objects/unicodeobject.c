@@ -1304,9 +1304,6 @@ PyObject *PyUnicode_AsDecodedObject(PyObject *unicode,
         goto onError;
     }
 
-    if (PyErr_WarnPy3k("decoding Unicode is not supported in 3.x", 1) < 0)
-        goto onError;
-
     if (encoding == NULL)
         encoding = PyUnicode_GetDefaultEncoding();
 
@@ -6499,6 +6496,10 @@ unicode_decode(PyUnicodeObject *self, PyObject *args, PyObject *kwargs)
     char *encoding = NULL;
     char *errors = NULL;
     PyObject *v;
+
+    if (PyErr_WarnPy3k_WithFix("decoding Unicode is not supported in 3.x", 
+                                "convert the unicode string to bytes before decoding", 1) < 0)
+        goto onError;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|ss:decode",
                                      kwlist, &encoding, &errors))

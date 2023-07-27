@@ -1401,11 +1401,9 @@ tok_get(register struct tok_state *tok, char **p_start, char **p_end)
                 c = tok_nextc(tok);
             }
             else {
-                if (Py_Py3kWarningFlag) {
-                    if (PyErr_WarnExplicit_WithFix(PyExc_Py3xWarning, "the unicode type is not supported in 3.x", 
-                                                   "use native strings for compatibility or "
-                                                   "a 'u' or 'b' prefix if a native string is not required", 
-                                                   tok->filename, tok->lineno, NULL, NULL)) {
+                if (PyErr_WarnExplicit_WithFix(PyExc_Py3xWarning, "the 'unicode' type is not explicitly supported in 3.x", 
+                                                "strings with a 'u' prefix are evaluated as type 'str'.", 
+                                                tok->filename, tok->lineno, NULL, NULL)) {
                         return NULL;
                     }
                 }
@@ -1460,15 +1458,15 @@ tok_get(register struct tok_state *tok, char **p_start, char **p_end)
             if (c == 'j' || c == 'J')
                 goto imaginary;
 #endif
-            if (c != 'o' || c != 'O') {
-                char buf[100];
-                if (Py_Py3kWarningFlag) {
-                    if (PyErr_WarnExplicit_WithFix(PyExc_Py3xWarning, "using just a '0' prefix for octal literals is not supported in 3.x", 
-                                                   "use the '0o' prefix for octal integers, if you intended the integer to be decimal", tok->filename, tok->lineno, NULL, NULL)) {
-                        return NULL;
-                    }
-                }
-            }
+            // if (c != 'o' || c != 'O') {
+            //     char buf[100];
+            //     if (Py_Py3kWarningFlag) {
+            //         if (PyErr_WarnExplicit_WithFix(PyExc_Py3xWarning, "using just a '0' prefix for octal literals is not supported in 3.x", 
+            //                                        "use the '0o' prefix for octal integers, if you intended the integer to be decimal", tok->filename, tok->lineno, NULL, NULL)) {
+            //             return NULL;
+            //         }
+            //     }
+            // }
             if (c == 'x' || c == 'X') {
 
                 /* Hex */

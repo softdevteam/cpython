@@ -1387,6 +1387,9 @@ class MixinStrUserStringTest:
         self.checkraises(TypeError, 'xyz', 'decode', 42)
         self.checkraises(TypeError, 'xyz', 'encode', 42)
 
+        with test_support.check_py3k_warnings():
+            self.assertRaises(Py3xWarning, b"test".encode, "encoding Bytes is not supported in 3.x", "convert the byte string to unicode before encoding")
+
 
 class MixinStrUnicodeTest:
     # Additional tests that only work with str and unicode.
