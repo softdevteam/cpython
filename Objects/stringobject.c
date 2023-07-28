@@ -1219,12 +1219,12 @@ string_richcompare(PyStringObject *a, PyStringObject *b, int op)
     Py_ssize_t min_len;
     PyObject *result;
 
-    /* Make sure both arguments are strings. */
-    if (!(PyString_Check(a) && PyString_Check(b))) {
-        if (PyErr_WarnPy3k_WithFix("comparing unicode and byte strings is not supported in 3.x", 
+    if (!PyString_Check(a) && PyErr_WarnPy3k_WithFix("comparing unicode and byte strings has different semantics in 3.x", 
                                 "convert the second string to byte.", 1) < 0)
         return NULL;
-        
+
+    /* Make sure both arguments are strings. */
+    if (!(PyString_Check(a) && PyString_Check(b))) {
         result = Py_NotImplemented;
         goto out;
     }

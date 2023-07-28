@@ -280,7 +280,8 @@ class UnicodeTest(
         self.assertTrue(u'\ud800\udc02' < u'\ud84d\udc56')
 
         with test_support.check_py3k_warnings():
-            self.assertRaises(Py3xWarning, u"hello" == b"hello", "comparing unicode and byte strings is not supported in 3.x: convert the second string to unicode.")
+            self.assertRaises(Py3xWarning, u"hello" == b"hello", 
+                              "comparing unicode and byte strings has different semantics in 3.x: convert the second string to unicode.")
 
     def test_capitalize(self):
         string_tests.CommonTest.test_capitalize(self)

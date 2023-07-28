@@ -1399,9 +1399,9 @@ class MixinStrUserStringTest:
 
         with test_support.check_py3k_warnings():
             self.assertRaises(Py3xWarning, str(3), 
-                              "the constructors of both 'str' and 'bytes' have different semantics in 3.x: use 'str' for unicode or 'bytes' for byte strings.")
+                              "comparing unicode and byte strings has different semantics in 3.x: use 'str' for unicode or 'bytes' for byte strings.")
             self.assertRaises(Py3xWarning, bytes(3), 
-                              "the constructors of both 'str' and 'bytes' have different semantics in 3.x: use 'str' for unicode or 'bytes' for byte strings.")
+                              "comparing unicode and byte strings has different semantics in 3.x: use 'str' for unicode or 'bytes' for byte strings.")
 
 
 class MixinStrUnicodeTest:
