@@ -6233,6 +6233,10 @@ int PyUnicode_Compare(PyObject *left,
     PyUnicodeObject *u = NULL, *v = NULL;
     int result;
 
+    if (!PyUnicode_Check(right) && PyErr_WarnPy3k_WithFix("comparing unicode and byte strings is not supported in 3.x", 
+                                "convert the second string to unicode.", 1) < 0)
+        return NULL;
+
     /* Coerce the two arguments */
     u = (PyUnicodeObject *)PyUnicode_FromObject(left);
     if (u == NULL)
