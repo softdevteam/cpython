@@ -494,8 +494,12 @@ class ASTHelpers_Test(unittest.TestCase):
 
 
 def test_main():
-    with test_support.check_py3k_warnings(("backquote not supported",
-                                             SyntaxWarning)):
+    deprecations = []
+    if sys.py3kwarning:
+        deprecations += [
+            ("backquote not supported", SyntaxWarning),
+            ("the L suffix is not supported in 3.x; drop the suffix", SyntaxWarning)]
+    with test_support.check_warnings(*deprecations):
         test_support.run_unittest(AST_Tests, ASTHelpers_Test)
 
 def main():

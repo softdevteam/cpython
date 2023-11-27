@@ -131,19 +131,6 @@ ast_warn(struct compiling *c, const node *n, char *msg)
 }
 
 static int
-ast_3x_warn(struct compiling *c, const node *n, char *msg)
-{
-    if (PyErr_WarnExplicit(PyExc_Py3xWarning, msg, c->c_filename, LINENO(n),
-                           NULL, NULL) < 0) {
-        /* if -Werr, change it to a SyntaxError */
-        if (PyErr_Occurred() && PyErr_ExceptionMatches(PyExc_Py3xWarning))
-            ast_error(n, msg);
-        return 0;
-    }
-    return 1;
-}
-
-static int
 forbidden_check(struct compiling *c, const node *n, const char *x)
 {
     if (!strcmp(x, "None"))
@@ -3355,8 +3342,7 @@ parsenumber(struct compiling *c, const node *n, const char *s)
 #endif
         if (*end == 'l' || *end == 'L') {
                 if (Py_Py3kWarningFlag &&
-                    !ast_3x_warn(c, n, "the L suffix is not supported in 3.x; simply drop the suffix, \n" 
-                                 "or accept the auto fixer modifications")) {
+                    !ast_warn(c, n, "the L suffix is not supported in 3.x; drop the suffix")) {
                         return NULL;
                 }
                 return PyLong_FromString((char *)s, (char **)0, 0);

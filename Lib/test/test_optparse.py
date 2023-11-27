@@ -1655,9 +1655,8 @@ class TestParseNumber(BaseTest):
                              "option -l: invalid long integer value: '0x12x'")
 
     def test_parse_num_3k_warnings(self):
-        expected = 'the L suffix is not supported in 3.x; simply drop the suffix, \
-                    or accept the auto fixer modifications'
-        with check_py3k_warnings((expected, Py3xWarning)):
+        expected = 'the L suffix is not supported in 3.x; drop the suffix'
+        with test_support.check_warnings():
             x = 10L
             y = 8L
             z = x + y
