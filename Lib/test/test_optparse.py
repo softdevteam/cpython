@@ -1654,6 +1654,15 @@ class TestParseNumber(BaseTest):
         self.assertParseFail(["-l", "0x12x"],
                              "option -l: invalid long integer value: '0x12x'")
 
+    def test_parse_num_3k_warnings(self):
+        expected = 'the L suffix is not supported in 3.x; drop the suffix'
+        with test_support.check_warnings():
+            x = 10L
+            y = 8L
+            z = x + y
+            a = x * y
+            b = x - y
+
 
 def test_main():
     test_support.run_unittest(__name__)

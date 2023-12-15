@@ -1982,6 +1982,13 @@ SimpleExtendsException(PyExc_Warning, SyntaxWarning,
 
 
 /*
+ *    3xWarning extends Warning
+ */
+SimpleExtendsException(PyExc_Warning, Py3xWarning,
+                       "Base class for warnings about 3.x compatibility.");
+
+
+/*
  *    RuntimeWarning extends Warning
  */
 SimpleExtendsException(PyExc_Warning, RuntimeWarning,
@@ -2104,6 +2111,7 @@ _PyExc_Init(void)
     PRE_INIT(ImportWarning)
     PRE_INIT(UnicodeWarning)
     PRE_INIT(BytesWarning)
+    PRE_INIT(Py3xWarning)
 
     m = Py_InitModule4("exceptions", functions, exceptions_doc,
         (PyObject *)NULL, PYTHON_API_VERSION);
@@ -2173,6 +2181,7 @@ _PyExc_Init(void)
     POST_INIT(ImportWarning)
     POST_INIT(UnicodeWarning)
     POST_INIT(BytesWarning)
+    POST_INIT(Py3xWarning)
 
     PyExc_MemoryErrorInst = BaseException_new(&_PyExc_MemoryError, NULL, NULL);
     if (!PyExc_MemoryErrorInst)
