@@ -6269,6 +6269,10 @@ PyObject *PyUnicode_RichCompare(PyObject *left,
 {
     int result;
 
+    if (PyString_Check(right) && PyErr_WarnPy3k("comparing unicode and byte strings has different semantics in 3.x: convert the first string to bytes.", 1) < 0){
+        goto onError;
+    }
+
     result = PyUnicode_Compare(left, right);
     if (result == -1 && PyErr_Occurred())
         goto onError;

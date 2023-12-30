@@ -1209,6 +1209,9 @@ string_richcompare(PyStringObject *a, PyStringObject *b, int op)
     PyObject *result;
 
     /* Make sure both arguments are strings. */
+    if ((PyString_Check(a) && PyUnicode_Check(b)) && PyErr_WarnPy3k("comparing unicode and byte strings has different semantics in 3.x: convert the second string to byte.", 1) < 0) {
+        goto out;
+    }
     if (!(PyString_Check(a) && PyString_Check(b))) {
         result = Py_NotImplemented;
         goto out;
