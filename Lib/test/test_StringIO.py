@@ -166,6 +166,23 @@ class TestStringIO(TestGenericStringIO):
         self.assertEqual(s, unicode('abcuvwxyz!'))
         self.assertEqual(type(s), types.UnicodeType)
 
+    def test_py3k_string_cmp(self):
+        "abc" == 123
+        "abc" == object()
+        u"abc" == 123
+        u"abc" == object()
+        with test_support.check_py3k_warnings(("comparing unicode and byte strings has different semantics in 3.x: convert the first string to bytes.",
+                                             DeprecationWarning)):
+            u"test str" == "test unicode"
+        deprecations = []
+        if sys.py3kwarning:
+            deprecations += [
+                ("comparing unicode and byte strings has different semantics in 3.x: convert the second string to byte.", DeprecationWarning),
+                ("comparing unicode and byte strings has different semantics in 3.x: convert the first string to bytes.", DeprecationWarning)
+            ]
+        with test_support.check_py3k_warnings(*deprecations):
+            "test str" == u"test unicode"
+
 class TestcStringIO(TestGenericStringIO):
     MODULE = cStringIO
 
