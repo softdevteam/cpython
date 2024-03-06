@@ -378,6 +378,7 @@ OBJECT_OBJS=	\
 		Objects/setobject.o \
 		Objects/sliceobject.o \
 		Objects/stringobject.o \
+		Objects/bytesobject.o \
 		Objects/structseq.o \
 		Objects/tupleobject.o \
 		Objects/typeobject.o \
@@ -733,6 +734,9 @@ Objects/bytearrayobject.o: $(srcdir)/Objects/bytearrayobject.c \
 Objects/stringobject.o: $(srcdir)/Objects/stringobject.c \
 				$(STRINGLIB_HEADERS)
 
+Objects/bytesobject.o: $(srcdir)/Objects/bytesobject.c \
+				$(STRINGLIB_HEADERS)
+
 .PHONY: regen-opcode-targets
 regen-opcode-targets:
 	# Regenerate Python/opcode_targets.h from Lib/opcode.py
@@ -823,6 +827,7 @@ PYTHON_HEADERS= \
 		Include/setobject.h \
 		Include/sliceobject.h \
 		Include/stringobject.h \
+		Include/bytesobject.h \
 		Include/structmember.h \
 		Include/structseq.h \
 		Include/symtable.h \

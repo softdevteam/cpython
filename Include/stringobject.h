@@ -1,5 +1,5 @@
 
-/* String (str/bytes) object interface */
+/* String (str) object interface */
 
 #ifndef Py_STRINGOBJECT_H
 #define Py_STRINGOBJECT_H
@@ -51,6 +51,10 @@ typedef struct {
 #define SSTATE_NOT_INTERNED 0
 #define SSTATE_INTERNED_MORTAL 1
 #define SSTATE_INTERNED_IMMORTAL 2
+
+#define BSTATE_NOT_SURE 0
+#define BSTATE_BYTE 1
+#define BSTATE_UNICODE 2
 
 PyAPI_DATA(PyTypeObject) PyBaseString_Type;
 PyAPI_DATA(PyTypeObject) PyString_Type;

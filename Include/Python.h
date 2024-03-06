@@ -95,6 +95,7 @@
 #endif
 #include "rangeobject.h"
 #include "stringobject.h"
+#include "bytesobject.h"
 #include "memoryobject.h"
 #include "bufferobject.h"
 #include "bytesobject.h"

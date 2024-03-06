@@ -422,6 +422,10 @@ typedef struct {
                                    implementing the buffer protocol */
 } PyUnicodeObject;
 
+#define BSTATE_NOT_SURE 0
+#define BSTATE_BYTE 1
+#define BSTATE_UNICODE 2
+
 PyAPI_DATA(PyTypeObject) PyUnicode_Type;
 
 #define PyUnicode_Check(op) \
