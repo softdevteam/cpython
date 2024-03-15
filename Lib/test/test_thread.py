@@ -2,10 +2,12 @@ import os
 import unittest
 import random
 from test import support
+from test.test_support import check_py3k_warnings
 thread = support.import_module('thread')
 import time
 import sys
 import weakref
+import warnings
 
 from test import lock_tests
 
@@ -156,6 +158,59 @@ class ThreadRunningTests(BasicThreadTest):
                 thread.start_new_thread(task, ())
                 started.acquire()
         self.assertIn("Traceback", stderr.getvalue())
+
+    def test_py3k_thread_module(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                import thread
+
+    def test_py3k_thread_module_get_ident(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                thread.get_ident()
+
+    def test_py3k_thread_module_start_new_thread(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                def f():
+                    ident.append(threading.currentThread().ident)
+                    done.set()
+                thread.start_new_thread((f), ())
+
+    def test_py3k_thread_module_allocate(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                thread.allocate_lock()
+
+    def test_py3k_thread_module_exit_thread(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                with self.assertRaises(SystemExit):
+                    thread.exit_thread()
+
+    def test_py3k_thread_module_interrupt_main(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                with self.assertRaises(KeyboardInterrupt):
+                    thread.interrupt_main()
+
+    def test_py3k_thread_module_count(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                thread._count()
+
+    def test_py3k_thread_module_stack_size(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                thread.stack_size()
 
 
 class Barrier:

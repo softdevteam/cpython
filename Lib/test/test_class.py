@@ -4,6 +4,7 @@ import unittest
 
 from test import test_support
 
+    
 testmeths = [
 
 # Binary operations
@@ -548,7 +549,6 @@ class ClassTests(unittest.TestCase):
             def __eq__(self, other): return 1
 
         self.assertRaises(TypeError, hash, C2())
-
 
     def testSFBug532646(self):
         # Test for SF bug 532646

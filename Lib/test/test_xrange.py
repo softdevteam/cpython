@@ -1,6 +1,7 @@
 # Python test set -- built-in functions
 
 import test.test_support, unittest
+from test.test_support import check_py3k_warnings
 import sys
 import pickle
 import itertools
@@ -178,6 +179,12 @@ class XrangeTest(unittest.TestCase):
             r = xrange(*t)
             r_out = eval(repr(r))
             self.assert_xranges_equivalent(r, r_out)
+
+    def test_xrange_3k(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                xrange(1, 10000)
 
     def test_range_iterators(self):
         # see issue 7298

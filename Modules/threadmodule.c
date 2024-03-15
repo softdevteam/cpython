@@ -657,6 +657,10 @@ thread_PyThread_start_new_thread(PyObject *self, PyObject *fargs)
     struct bootstate *boot;
     long ident;
 
+    if (PyErr_WarnPy3k_WithFix("thread.start_new_thread is removed in 3.x", 
+                                "use the threading._start_new_thread instead", 1))
+        return NULL;
+
     if (!PyArg_UnpackTuple(fargs, "start_new_thread", 2, 3,
                            &func, &args, &keyw))
         return NULL;
@@ -718,6 +722,10 @@ printed unless the exception is SystemExit.\n");
 static PyObject *
 thread_PyThread_exit_thread(PyObject *self)
 {
+    if (PyErr_WarnPy3k_WithFix("thread.exit is removed in 3.x", 
+                                "no equivalent method exists, raising SystemExit will exit a thread", 1))
+        return NULL;
+
     PyErr_SetNone(PyExc_SystemExit);
     return NULL;
 }
@@ -732,6 +740,10 @@ thread to exit silently unless the exception is caught.");
 static PyObject *
 thread_PyThread_interrupt_main(PyObject * self)
 {
+    if (PyErr_WarnPy3k_WithFix("thread.interrupt_main is removed in 3.x", 
+                                "no equivalent method exists, raising KeyboardInterrupt will interruot the main thread", 1))
+        return NULL;
+
     PyErr_SetInterrupt();
     Py_INCREF(Py_None);
     return Py_None;
@@ -749,6 +761,10 @@ static lockobject *newlockobject(void);
 static PyObject *
 thread_PyThread_allocate_lock(PyObject *self)
 {
+    if (PyErr_WarnPy3k_WithFix("thread.allocate_lock is removed in 3.x", 
+                                "use the threading._allocate_lock instead", 1))
+        return NULL;
+
     return (PyObject *) newlockobject();
 }
 
@@ -762,6 +778,10 @@ static PyObject *
 thread_get_ident(PyObject *self)
 {
     long ident;
+    if (PyErr_WarnPy3k_WithFix("thread.get_ident is removed in 3.x", 
+                                "use the threading.get_ident instead", 1))
+        return NULL;
+
     ident = PyThread_get_thread_ident();
     if (ident == -1) {
         PyErr_SetString(ThreadError, "no current thread ident");
@@ -784,6 +804,10 @@ A thread's identity may be reused for another thread after it exits.");
 static PyObject *
 thread__count(PyObject *self)
 {
+    if (PyErr_WarnPy3k_WithFix("thread.count is removed in 3.x", 
+                                "use the threading._count instead", 1))
+        return NULL;
+
     return PyInt_FromLong(nb_threads);
 }
 
@@ -805,6 +829,10 @@ thread_stack_size(PyObject *self, PyObject *args)
     size_t old_size;
     Py_ssize_t new_size = 0;
     int rc;
+
+     if (PyErr_WarnPy3k_WithFix("thread.stack_size is removed in 3.x", 
+                                "use the threading.stack_size instead", 1))
+        return NULL;
 
     if (!PyArg_ParseTuple(args, "|n:stack_size", &new_size))
         return NULL;
@@ -903,6 +931,10 @@ PyMODINIT_FUNC
 initthread(void)
 {
     PyObject *m, *d;
+
+    if (PyErr_WarnPy3k_WithFix("In 3.x, the thread module is removed", 
+                                "use the threading module instead", 1))
+        return;
 
     /* Initialize types: */
     if (PyType_Ready(&localdummytype) < 0)

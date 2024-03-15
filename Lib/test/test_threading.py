@@ -1,8 +1,9 @@
 # Very rudimentary test of threading module
 
 import test.test_support
-from test.test_support import verbose, cpython_only
+from test.test_support import verbose, cpython_only, check_py3k_warnings
 from test.script_helper import assert_python_ok
+import warnings
 
 import random
 import re
@@ -479,6 +480,24 @@ class ThreadTests(BaseTestCase):
             for t in threads:
                 t.join()
             self.assertRaises(ValueError, bs.release)
+
+    def test_threading_module_method_rename(self):
+        import threading
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                threading. _get_ident()
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                def f():
+                    ident.append(threading.currentThread().ident)
+                    done.set()
+                threading._start_new_thread((f), ())
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                threading._allocate_lock()
 
 class ThreadJoinOnShutdown(BaseTestCase):
 

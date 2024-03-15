@@ -12,37 +12,37 @@ class TestVectorsTestCase(unittest.TestCase):
         # Test the HMAC module against test vectors from the RFC.
 
         def md5test(key, data, digest):
-            h = hmac.HMAC(key, data)
+            h = hmac.HMAC(key, data, digestmod=hashlib.sha1)
             self.assertEqual(h.hexdigest().upper(), digest.upper())
 
         md5test(chr(0x0b) * 16,
                 "Hi There",
-                "9294727A3638BB1C13F48EF8158BFC9D")
+                "675B0B3A1B4DDF4E124872DA6C2F632BFED957E9")
 
         md5test("Jefe",
                 "what do ya want for nothing?",
-                "750c783e6ab0b503eaa86e310a5db738")
+                "EFFCDF6AE5EB2FA2D27416D5F184DF9C259A7C79")
 
         md5test(chr(0xAA)*16,
                 chr(0xDD)*50,
-                "56be34521d144c88dbb8c733f0e8b3f6")
+                "D730594D167E35D5956FD8003D0DB3D3F46DC7BB")
 
         md5test("".join([chr(i) for i in range(1, 26)]),
                 chr(0xCD) * 50,
-                "697eaf0aca3a3aea3a75164746ffaa79")
+                "4C9007F4026250C6BC8414F9BF50C86C2D7235DA")
 
         md5test(chr(0x0C) * 16,
                 "Test With Truncation",
-                "56461ef2342edc00f9bab995690efd4c")
+                "37268B7E21E84DA5720C53C4BA03AD1104039FA7")
 
         md5test(chr(0xAA) * 80,
                 "Test Using Larger Than Block-Size Key - Hash Key First",
-                "6b1ab7fe4bd7bf8f0b62e6ce61b9d0cd")
+                "AA4AE5E15272D00E95705637CE8A3B55ED402112")
 
         md5test(chr(0xAA) * 80,
                 ("Test Using Larger Than Block-Size Key "
                  "and Larger Than One Block-Size Data"),
-                "6f630fad67cda0ee1fb1f562db3aa53e")
+                "E8E99D0F45237D786D6BBAA7965C7808BBFF1A91")
 
     def test_sha_vectors(self):
         def shatest(key, data, digest):
@@ -232,14 +232,14 @@ class ConstructorTestCase(unittest.TestCase):
         # Standard constructor call.
         failed = 0
         try:
-            h = hmac.HMAC("key")
+            h = hmac.HMAC("key", digestmod=hashlib.sha1)
         except:
             self.fail("Standard constructor call raised exception.")
 
     def test_withtext(self):
         # Constructor call with text.
         try:
-            h = hmac.HMAC("key", "hash this!")
+            h = hmac.HMAC("key", "hash this!", digestmod=hashlib.sha1)
         except:
             self.fail("Constructor call with text argument raised exception.")
 
@@ -249,6 +249,13 @@ class ConstructorTestCase(unittest.TestCase):
             h = hmac.HMAC("key", "", hashlib.sha1)
         except:
             self.fail("Constructor call with hashlib.sha1 raised exception.")
+
+    def test_3k_no_digest(self):
+        import sys
+        if sys.py3kwarning:
+           with warnings.catch_warnings(record=True) as w:
+               warnings.filterwarnings('always', category=Py3xWarning)
+               h = hmac.HMAC("key", "", hashlib.sha1)
 
 class SanityTestCase(unittest.TestCase):
 
@@ -262,7 +269,7 @@ class SanityTestCase(unittest.TestCase):
         # Exercising all methods once.
         # This must not raise any exceptions
         try:
-            h = hmac.HMAC("my secret key")
+            h = hmac.HMAC("my secret key", digestmod=hashlib.sha1)
             h.update("compute the hash of this text!")
             dig = h.digest()
             dig = h.hexdigest()
@@ -274,7 +281,7 @@ class CopyTestCase(unittest.TestCase):
 
     def test_attributes(self):
         # Testing if attributes are of same type.
-        h1 = hmac.HMAC("key")
+        h1 = hmac.HMAC("key", digestmod=hashlib.sha1)
         h2 = h1.copy()
         self.assertTrue(h1.digest_cons == h2.digest_cons,
             "digest constructors don't match.")
@@ -285,7 +292,7 @@ class CopyTestCase(unittest.TestCase):
 
     def test_realcopy(self):
         # Testing if the copy method created a real copy.
-        h1 = hmac.HMAC("key")
+        h1 = hmac.HMAC("key", digestmod=hashlib.sha1)
         h2 = h1.copy()
         # Using id() in case somebody has overridden __cmp__.
         self.assertTrue(id(h1) != id(h2), "No real copy of the HMAC instance.")
@@ -296,7 +303,7 @@ class CopyTestCase(unittest.TestCase):
 
     def test_equality(self):
         # Testing if the copy has the same digests.
-        h1 = hmac.HMAC("key")
+        h1 = hmac.HMAC("key", digestmod=hashlib.sha1)
         h1.update("some random text")
         h2 = h1.copy()
         self.assertTrue(h1.digest() == h2.digest(),

@@ -447,6 +447,10 @@ bytesio_truncate(bytesio *self, PyObject *args)
         size = PyNumber_AsSsize_t(arg, PyExc_OverflowError);
         if (size == -1 && PyErr_Occurred())
             return NULL;
+        if (size == 0 && PyErr_WarnPy3k_WithFix("BytesIO.truncate() does not shift the file pointer",
+                       "use seek(0) before doing truncate(0)", 1) < 0){
+            return NULL;
+        }
     }
     else if (arg == Py_None) {
         /* Truncate to current position if no argument is passed. */

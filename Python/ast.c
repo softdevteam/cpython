@@ -131,6 +131,19 @@ ast_warn(struct compiling *c, const node *n, char *msg)
 }
 
 static int
+ast_3x_warn(struct compiling *c, const node *n, char *msg, char *fix)
+{
+    if (PyErr_WarnExplicit_WithFix(PyExc_Py3xWarning, msg, fix, c->c_filename, LINENO(n),
+                           NULL, NULL) < 0) {
+        /* if -Werr, change it to a SyntaxError */
+        if (PyErr_Occurred() && PyErr_ExceptionMatches(PyExc_Py3xWarning))
+            ast_error(n, msg);
+        return 0;
+    }
+    return 1;
+}
+
+static int
 forbidden_check(struct compiling *c, const node *n, const char *x)
 {
     if (!strcmp(x, "None"))
@@ -890,13 +903,23 @@ ast_for_decorators(struct compiling *c, const node *n)
     return decorator_seq;
 }
 
+static int
+compiler_islistcomp(stmt_ty s)
+{
+    if (s->kind != Expr_kind)
+        return 0;
+    return s->v.Expr.value->kind == ListComp_kind;
+}
+
 static stmt_ty
 ast_for_funcdef(struct compiling *c, const node *n, asdl_seq *decorator_seq)
 {
     /* funcdef: 'def' NAME parameters ':' suite */
     identifier name;
     arguments_ty args;
-    asdl_seq *body;
+    asdl_seq *body, *lstcomp, *var_of_int;
+    int nc, i, y, islistcomp;
+    stmt_ty st, var_st;
     int name_i = 1;
 
     REQ(n, funcdef);
@@ -912,6 +935,26 @@ ast_for_funcdef(struct compiling *c, const node *n, asdl_seq *decorator_seq)
     body = ast_for_suite(c, CHILD(n, name_i + 3));
     if (!body)
         return NULL;
+    
+    if (Py_Py3kWarningFlag) {
+        nc = asdl_seq_LEN(body);
+        for (i = 0; i < nc; i++) {
+            st = (stmt_ty)asdl_seq_GET(body, i);
+            islistcomp = compiler_islistcomp(st);
+            if (islistcomp) {
+                lstcomp = asdl_seq_GET(body, i);
+                var_of_int = asdl_seq_GET(lstcomp, 3);
+                for (y=i; y < nc; y++) {
+                    var_st = (stmt_ty)asdl_seq_GET(body, y);
+                    if ((var_st == var_of_int) &&
+                        !ast_3x_warn(c, n, "This listcomp does not leak a variable in 3.x",
+                                     "assign the variable before use"))
+                        return 0;
+                }
+            }
+        }  
+    }
+   
 
     return FunctionDef(name, args, body, decorator_seq, LINENO(n),
                        n->n_col_offset, c->c_arena);
@@ -1423,8 +1466,9 @@ ast_for_atom(struct compiling *c, const node *n)
     case LSQB: /* list (or list comprehension) */
         ch = CHILD(n, 1);
 
-        if (TYPE(ch) == RSQB)
+        if (TYPE(ch) == RSQB) {
             return List(NULL, Load, LINENO(n), n->n_col_offset, c->c_arena);
+        }
 
         REQ(ch, listmaker);
         if (NCH(ch) == 1 || TYPE(CHILD(ch, 1)) == COMMA) {
@@ -1435,6 +1479,10 @@ ast_for_atom(struct compiling *c, const node *n)
             return List(elts, Load, LINENO(n), n->n_col_offset, c->c_arena);
         }
         else
+            if (Py_Py3kWarningFlag &&
+                    !ast_3x_warn(c, n, "list comp without parenthesis is invalid in 3.x",
+                            "use parenthesis for list items more than one"))
+                        return NULL;
             return ast_for_listcomp(c, ch);
     case LBRACE: {
         /* dictorsetmaker:
@@ -2281,6 +2329,12 @@ ast_for_print_stmt(struct compiling *c, const node *n)
     int i, j, values_count, start = 1;
 
     REQ(n, print_stmt);
+    if (Py_Py3kWarningFlag && TYPE(CHILD(n, 1)) != LPAR) {
+        if (!ast_3x_warn(c, n,
+            "print must be called as a function, not a statement in 3.x", 
+            "You can fix this now by using parentheses for arguments to 'print'"))
+            return NULL;              
+    }
     if (NCH(n) >= 2 && TYPE(CHILD(n, 1)) == RIGHTSHIFT) {
         dest = ast_for_expr(c, CHILD(n, 2));
         if (!dest)
@@ -2404,6 +2458,12 @@ ast_for_flow_stmt(struct compiling *c, const node *n)
             }
             else if (NCH(ch) == 6) {
                 expr_ty expr1, expr2, expr3;
+
+                if (Py_Py3kWarningFlag &&
+                    !ast_3x_warn(c, n, "the  raise clause with three components is not supported in 3.x", 
+                                 "use 'raise' with a single object")) {
+                        return NULL;
+                }
 
                 expr1 = ast_for_expr(c, CHILD(ch, 1));
                 if (!expr1)

@@ -4,6 +4,8 @@ from test import test_support
 import unittest
 import binascii
 import array
+import sys
+import warnings
 
 # Note: "*_hex" functions are aliases for "(un)hexlify"
 b2a_functions = ['b2a_base64', 'b2a_hex', 'b2a_hqx', 'b2a_qp', 'b2a_uu',
@@ -171,9 +173,12 @@ class BinASCIITest(unittest.TestCase):
         self.assertRaises(TypeError, binascii.a2b_hex, t[:-1])
         self.assertRaises(TypeError, binascii.a2b_hex, t[:-1] + 'q')
 
-        # Verify the treatment of Unicode strings
-        if test_support.have_unicode:
-            self.assertEqual(binascii.hexlify(unicode('a', 'ascii')), '61')
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                if test_support.have_unicode:
+                    self.assertEqual(binascii.hexlify(unicode('a', 'ascii')), '61')
+                    self.assertEqual(binascii.b2a_hex(unicode('a', 'ascii')), '61')
 
     def test_qp(self):
         type2test = self.type2test

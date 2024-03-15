@@ -1507,6 +1507,7 @@ builtin_open(PyObject *self, PyObject *args, PyObject *kwds)
     return PyObject_Call((PyObject*)&PyFile_Type, args, kwds);
 }
 
+
 PyDoc_STRVAR(open_doc,
 "open(name[, mode[, buffering]]) -> file object\n\
 \n\

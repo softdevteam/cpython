@@ -73,6 +73,7 @@ class Popen2Test(unittest.TestCase):
         r, w = popen2.popen2(self.cmd)
         self.validate_output(self.teststr, self.expected, r, w)
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_popen3(self):
         if os.name == 'posix':
             r, w, e = popen2.popen3([self.cmd])
@@ -94,6 +95,7 @@ class Popen2Test(unittest.TestCase):
         w, r = os.popen2(self.cmd)
         self.validate_output(self.teststr, self.expected, r, w)
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_os_popen3(self):
         # same test as test_popen3(), but using the os.popen*() API
         if os.name == 'posix':
@@ -109,6 +111,7 @@ class Popen2Test(unittest.TestCase):
         w, r, e = os.popen3(self.cmd)
         self.validate_output(self.teststr, self.expected, r, w, e)
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_os_popen4(self):
         if os.name == 'posix':
             w, r = os.popen4([self.cmd])

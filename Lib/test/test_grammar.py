@@ -65,6 +65,20 @@ class TokenTests(unittest.TestCase):
         else:
             self.fail('Weird maxint value %r' % maxint)
 
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                self.assertEqual(034, 28)
+                self.assertEqual(01, 1)
+                for warning in w:
+                    self.assertTrue(Py3xWarning is w.category)
+                    self.assertEqual(str(w.message), "using just a '0' prefix for octal literals is not supported in 3.x: " \
+                                        "use the '0o' prefix for octal integers")
+                    self.assertEqual(len(w), 2)
+                    self.assertIn("using just a '0' prefix for octal literals is not supported in 3.x:: \n"
+                                    "use the '0o' prefix for octal integers",
+                                    str(oct.exception))
+
     def test_long_integers(self):
         x = 0L
         x = 0l
@@ -383,6 +397,12 @@ class GrammarTests(unittest.TestCase):
         save_stdout = sys.stdout
         sys.stdout = StringIO.StringIO()
 
+        # test printing to an instance
+        class Gulp:
+            def write(self, msg): pass
+
+        gulp = Gulp()
+
         print 1, 2, 3
         print 1, 2, 3,
         print
@@ -396,16 +416,39 @@ class GrammarTests(unittest.TestCase):
         print >> sys.stdout, 0 or 1, 0 or 1,
         print >> sys.stdout, 0 or 1
 
-        # test printing to an instance
-        class Gulp:
-            def write(self, msg): pass
-
-        gulp = Gulp()
         print >> gulp, 1, 2, 3
         print >> gulp, 1, 2, 3,
         print >> gulp
         print >> gulp, 0 or 1, 0 or 1,
         print >> gulp, 0 or 1
+
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+
+                print 1, 2, 3
+                print 1, 2, 3,
+                print
+                print 0 or 1, 0 or 1,
+                print 0 or 1
+
+                # 'print' '>>' test ','
+                print >> sys.stdout, 1, 2, 3
+                print >> sys.stdout, 1, 2, 3,
+                print >> sys.stdout
+                print >> sys.stdout, 0 or 1, 0 or 1,
+                print >> sys.stdout, 0 or 1
+
+                print >> gulp, 1, 2, 3
+                print >> gulp, 1, 2, 3,
+                print >> gulp
+                print >> gulp, 0 or 1, 0 or 1,
+                print >> gulp, 0 or 1
+
+                for warning in w:
+                    self.assertTrue(Py3xWarning is w.category)
+                    self.assertEqual(str(w.message), "print must be called as a function, not a statement in 3.x", 
+                                     "You can fix this now by using parentheses for arguments to 'print'")
 
         # test print >> None
         def driver():
@@ -1026,6 +1069,26 @@ hello world
         nums = [1, 2, 3]
         self.assertEqual({i:i+1 for i in nums}, {1: 2, 2: 3, 3: 4})
 
+    def test_listcomp_py3k_paren(self):
+        [x for x in [1, 2, 2]]
+        if sys.py3kwarning:
+           with warnings.catch_warnings(record=True) as w:
+               warnings.filterwarnings('always', category=Py3xWarning)
+               [x for x in 1, 2, 3]
+
+    def test_listcomps_py3k_scope(self):
+        def foo(): print([x for x in [1, 2, 2]])
+        if sys.py3kwarning:
+           with warnings.catch_warnings(record=True) as w:
+               warnings.filterwarnings('always', category=Py3xWarning)
+               def foo(): x = 0; [x for x in [1, 2, 2]]; print(x)
+        def foo(): x = 0; print(x); [x for x in [1, 2, 2]]
+        def foo():
+            x = 0
+            if x > 0: 
+                [x for x in [1, 2, 2]]
+                print(x)
+
     def test_listcomps(self):
         # list comprehension tests
         nums = [1, 2, 3, 4, 5]
@@ -1197,6 +1260,27 @@ hello world
         self.assertTrue(False is (2 is 3))
         self.assertFalse((False is 2) is 3)
         self.assertFalse(False is 2 is 3)
+
+    def test_py3x_unicode_warnings_u(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                self.assertEqual(u'foo', u'foo')
+                for warning in w:
+                    self.assertTrue(Py3xWarning is w.category)
+                    self.assertEqual(str(w.message), "the unicode type is not supported in 3.x: " \
+                                     "use native strings for compatibility or " \
+                                     "a 'u' or 'b' prefix if a native string is not required")
+
+    def test_py3x_unicode_warnings_ur(self):
+        if sys.py3kwarning:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.filterwarnings('always', category=Py3xWarning)
+                self.assertEqual(ur'foo', u'foo')
+                for warning in w:
+                    self.assertTrue(Py3xWarning is w.category)
+                    self.assertEqual(str(w.message), "the 'ur' prefix in string literals is not supported in 3.x: ",
+                                     "use a 'u' and two backslashes for a literal backslash")
 
 
 def test_main():
