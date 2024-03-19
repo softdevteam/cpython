@@ -415,12 +415,17 @@ extern "C" {
 typedef struct {
     PyObject_HEAD
     Py_ssize_t length;          /* Length of raw Unicode data in buffer */
+    Py_ssize_t ob_bstate;
     Py_UNICODE *str;            /* Raw Unicode buffer */
     long hash;                  /* Hash value; -1 if not set */
     PyObject *defenc;           /* (Default) Encoded version as Python
                                    string, or NULL; this is used for
                                    implementing the buffer protocol */
 } PyUnicodeObject;
+
+#define BSTATE_NOT_SURE 0
+#define BSTATE_BYTE 1
+#define BSTATE_UNICODE 2
 
 PyAPI_DATA(PyTypeObject) PyUnicode_Type;
 
