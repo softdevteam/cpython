@@ -3016,6 +3016,9 @@ string_encode(PyStringObject *self, PyObject *args, PyObject *kwargs)
     char *errors = NULL;
     PyObject *v;
 
+    if (PyErr_WarnPy3k("'encode()' is not supported on bytes in 3.x: convert the string to unicode.", 1) < 0) {
+        return NULL;
+    }
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|ss:encode",
                                      kwlist, &encoding, &errors))
         return NULL;
@@ -3054,6 +3057,11 @@ string_decode(PyStringObject *self, PyObject *args, PyObject *kwargs)
     char *encoding = NULL;
     char *errors = NULL;
     PyObject *v;
+
+    if (PyErr_WarnPy3k("'decode()' is not supported on 'str' in 3.x: convert the string to bytes.", 1) < 0) {
+        self->ob_bstate = BSTATE_BYTE;
+        return NULL;
+    }
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|ss:decode",
                                      kwlist, &encoding, &errors))
@@ -3609,6 +3617,10 @@ string__format__(PyObject* self, PyObject* args)
     PyObject *format_spec;
     PyObject *result = NULL;
     PyObject *tmp = NULL;
+
+    if (PyErr_WarnPy3k("'format()' is not supported for bytes in 3.x: use alternate format syntax.", 1) < 0) {
+        return NULL;
+    }
 
     /* If 2.x, convert format_spec to the same type as value */
     /* This is to allow things like u''.format('') */
