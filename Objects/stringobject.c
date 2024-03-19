@@ -3058,8 +3058,12 @@ string_decode(PyStringObject *self, PyObject *args, PyObject *kwargs)
     char *errors = NULL;
     PyObject *v;
 
-    if (PyErr_WarnPy3k("'decode()' is not supported on 'str' in 3.x: convert the string to bytes.", 1) < 0) {
+    if (PyString_CheckExact(self)) {
         self->ob_bstate = BSTATE_BYTE;
+    }
+
+    if ((self->ob_bstate == BSTATE_BYTE) &&
+        PyErr_WarnPy3k("'decode()' is not supported on 'str' in 3.x: convert the string to bytes.", 1) < 0) {
         return NULL;
     }
 

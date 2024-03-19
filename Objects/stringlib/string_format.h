@@ -1186,7 +1186,7 @@ formatter_parser(STRINGLIB_OBJECT *self)
 {
     formatteriterobject *it;
 
-    if (PyErr_WarnPy3k("'_format_parser()' is not supported for bytes in 3.x: use alternate format parsing syntax.", 1) < 0) {
+    if (PyErr_WarnPy3k("'_format_parser()' is not supported for both unicode and bytes in 3.x: use alternate format parsing syntax.", 1) < 0) {
         return NULL;
     }
 
@@ -1330,7 +1330,7 @@ formatter_field_name_split(STRINGLIB_OBJECT *self)
     PyObject *first_obj = NULL;
     PyObject *result = NULL;
 
-    if (PyErr_WarnPy3k("'_formatter_field_name_split' is not supported for bytes in 3.x: use alternate formatter split syntax.", 1) < 0) {
+    if (PyErr_WarnPy3k("'_formatter_field_name_split()' is not supported for both unicode and bytes in 3.x: use alternate formatter split syntax.", 1) < 0) {
         return NULL;
     }
 

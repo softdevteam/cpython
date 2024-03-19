@@ -208,6 +208,22 @@ class TestPy3KWarnings(unittest.TestCase):
             with check_py3k_warnings() as w:
                 self.assertWarning(set(), w, expected)
 
+    def test_bytes_parsing(self):
+        with check_py3k_warnings():
+            b"{0}-{1}: {2}".format(1,"foo",True)
+            b"{0}-{1}: {2}".encode()
+
+    def test_str_parsing(self):
+        with check_py3k_warnings():
+            "{0}-{1}: {2}".decode()
+
+    def test_string_parsing(self):
+        with check_py3k_warnings():
+            b"{0}-{1}: {2}"._formatter_parser()
+            b"{0}-{1}: {2}"._formatter_field_name_split()
+            "{0}-{1}: {2}"._formatter_parser()
+            "{0}-{1}: {2}"._formatter_field_name_split()
+
     def test_slice_methods(self):
         class Spam(object):
             def __getslice__(self, i, j): pass
