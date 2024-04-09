@@ -36,6 +36,7 @@ typedef struct {
     PyObject_VAR_HEAD
     long ob_shash;
     int ob_sstate;
+    Py_ssize_t ob_bstate;
     char ob_sval[1];
 
     /* Invariants:
@@ -51,6 +52,10 @@ typedef struct {
 #define SSTATE_NOT_INTERNED 0
 #define SSTATE_INTERNED_MORTAL 1
 #define SSTATE_INTERNED_IMMORTAL 2
+
+#define BSTATE_NOT_SURE 0
+#define BSTATE_BYTE 1
+#define BSTATE_UNICODE 2
 
 PyAPI_DATA(PyTypeObject) PyBaseString_Type;
 PyAPI_DATA(PyTypeObject) PyString_Type;
