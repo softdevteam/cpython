@@ -1051,6 +1051,11 @@ binascii_hexlify(PyObject *self, PyObject *args)
     argbuf = parg.buf;
     arglen = parg.len;
 
+    if (PyUnicode_Check(args))
+        if (PyErr_WarnPy3k_WithFix("The hexlify() module expects bytes in 3.x",
+                                   "use the 'b' prefix on the string", 1) < 0)
+            return NULL;
+
     assert(arglen >= 0);
     if (arglen > PY_SSIZE_T_MAX / 2) {
         PyBuffer_Release(&parg);

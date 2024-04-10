@@ -24,6 +24,7 @@ class TestCase(unittest.TestCase):
         sys.stderr = self.save_stderr
         atexit._exithandlers = self.save_handlers
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_args(self):
         atexit.register(self.h1)
         atexit.register(self.h4)

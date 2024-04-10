@@ -1,6 +1,6 @@
 from test.test_support import run_unittest, check_py3k_warnings
 import unittest
-
+    
 class TestImplementationComparisons(unittest.TestCase):
 
     def test_type_comparisons(self):

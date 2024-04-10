@@ -9,6 +9,7 @@ import re
 import struct
 import string
 import binascii
+from warnings import warnpy3k_with_fix
 
 
 __all__ = [
@@ -28,7 +29,6 @@ __all__ = [
 
 _translation = [chr(_x) for _x in range(256)]
 EMPTYSTRING = ''
-
 
 def _translate(s, altchars):
     translation = _translation[:]
@@ -316,6 +316,8 @@ def decode(input, output):
 
 def encodestring(s):
     """Encode a string into multiple lines of base-64 data."""
+    warnpy3k_with_fix("base64.encodestring is not supported in 3.x", 
+                      "use base64.encodebytes instead", stacklevel=2)
     pieces = []
     for i in range(0, len(s), MAXBINSIZE):
         chunk = s[i : i + MAXBINSIZE]
@@ -325,6 +327,8 @@ def encodestring(s):
 
 def decodestring(s):
     """Decode a string."""
+    warnpy3k_with_fix("base64.decodestring is not supported in 3.x", 
+                      "use base64.decodebytes instead", stacklevel=2)
     return binascii.a2b_base64(s)
 
 

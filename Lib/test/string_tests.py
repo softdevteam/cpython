@@ -5,6 +5,7 @@ Common tests shared by test_str, test_unicode, test_userstring and test_string.
 import unittest, string, sys, struct
 from test import test_support
 from UserList import UserList
+import warnings
 
 class Sequence:
     def __init__(self, seq='wxyz'): self.seq = seq
@@ -1057,6 +1058,24 @@ class MixinStrUnicodeUserStringTest(NonStringModuleTest):
         self.checkequal('', 'abc', '__getslice__', 2, 1)
 
         self.checkraises(TypeError, 'abc', '__getslice__', 'def')
+
+    def test_py3x_warnings_isinstance(self):
+       if sys.py3kwarning:
+           with warnings.catch_warnings(record=True) as w:
+               warnings.filterwarnings('always', category=Py3xWarning)
+               isinstance(u"fix", basestring)
+               isinstance(b"fix", basestring)
+               isinstance("fix", basestring)
+
+    def test_py3x_warnings_join(self):
+        if sys.py3kwarning:
+           with warnings.catch_warnings(record=True) as w:
+               warnings.filterwarnings('always', category=Py3xWarning)
+               x = 'foo'
+               y = b'foo'
+               z = x + y
+               b = y + x
+               v = x.__add__(y)
 
     def test_extended_getslice(self):
         # Test extended slicing by comparing with list slicing.

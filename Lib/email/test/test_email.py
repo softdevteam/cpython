@@ -241,6 +241,7 @@ class TestMessageAPI(TestEmailBase):
         msg.set_payload('foo')
         eq(msg.get_payload(decode=True), 'foo')
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_decode_bogus_uu_payload_quietly(self):
         msg = Message()
         msg.set_payload('begin 664 foo.txt\n%<W1F=0000H \n \nend\n')

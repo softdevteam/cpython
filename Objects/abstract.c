@@ -2938,6 +2938,14 @@ PyObject_IsInstance(PyObject *inst, PyObject *cls)
 {
     static PyObject *name = NULL;
 
+    if ((PyTypeObject *)cls == &PyBaseString_Type) {
+        if (Py_Py3kWarningFlag &&
+            PyErr_WarnEx_WithFix(PyExc_Py3xWarning,
+                    "the basestring type is not supported in 3.x",
+                    "import a third party library like six and use a compatible type like string_types", 1) < 0) {
+            return -1;
+        }
+    }
     /* Quick test for an exact match */
     if (Py_TYPE(inst) == (PyTypeObject *)cls)
         return 1;

@@ -1982,7 +1982,8 @@ SimpleExtendsException(PyExc_Warning, SyntaxWarning,
 
 
 /*
- *    3xWarning extends Warning
+ *    Py3xWarning extends Warning
+ *    XXX(nanjekyejoannah): Suppress this warning for legacy tests for now
  */
 SimpleExtendsException(PyExc_Warning, Py3xWarning,
                        "Base class for warnings about 3.x compatibility.");

@@ -8,6 +8,7 @@ Make sure warnings module is left unaltered (http://bugs.python.org/issue18081).
 
 import unittest
 from test.test_support import captured_stderr
+import sys
 
 import warnings
 # Try to capture default showwarning before Idle modules are imported.
@@ -39,6 +40,7 @@ class RunWarnTest(unittest.TestCase):
         run.capture_warnings(False)
         self.assertIs(warnings.showwarning, showwarning)
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_run_show(self):
         with captured_stderr() as f:
             run.idle_showwarning_subproc(
@@ -62,6 +64,7 @@ class ShellWarnTest(unittest.TestCase):
                 'Test', UserWarning, 'test_warning.py', 99, 'Line of code')
         self.assertEqual(idlemsg, s)
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def test_shell_show(self):
         with captured_stderr() as f:
             shell.idle_showwarning(

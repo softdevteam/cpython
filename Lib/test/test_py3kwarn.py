@@ -112,6 +112,42 @@ class TestPy3KWarnings(unittest.TestCase):
             w.reset()
             self.assertWarning({2:3} >= {}, w, expected)
 
+    def test_dict_viewkeys(self):
+        expected = 'dict.viewkeys() is not supported in 3.x: use dict.keys() instead'
+        with check_py3k_warnings() as w:
+            d = {}
+            d.viewkeys()
+
+    def test_dict_viewvalues(self):
+        expected = 'dict.viewvalues() is not supported in 3.x: use dict.values() instead'
+        with check_py3k_warnings() as w:
+            d = {}
+            d.viewvalues()
+
+    def test_dict_viewitems(self):
+        expected = 'dict.viewitems() is not supported in 3.x: use dict.items() instead'
+        with check_py3k_warnings() as w:
+            d = {}
+            d.viewitems()
+
+    def test_dict_iterkeys(self):
+        expected = 'dict.iterkeys() is not supported in 3.x: use dict.keys() instead'
+        with check_py3k_warnings() as w:
+            d = {}
+            d.iterkeys()
+
+    def test_dict_itervalues(self):
+        expected = 'dict.itervalues() is not supported in 3.x: use dict.values() instead'
+        with check_py3k_warnings() as w:
+            d = {}
+            d.itervalues()
+
+    def test_dict_iteritems(self):
+        expected = 'dict.iteritems() is not supported in 3.x: use dict.items() instead'
+        with check_py3k_warnings() as w:
+            d = {}
+            d.iteritems()
+
     def test_cell_inequality_comparisons(self):
         expected = 'cell comparisons not supported in 3.x'
         def f(x):
@@ -263,6 +299,36 @@ class TestPy3KWarnings(unittest.TestCase):
             with check_py3k_warnings() as w:
                 self.assertWarning(f.xreadlines(), w, expected)
 
+    def test_bytesio_truncate(self):
+        from io import BytesIO
+        x = BytesIO(b'AAAAAA')
+        expected = "BytesIO.truncate() does not shift the file pointer: use seek(0) before doing truncate(0)"
+        self.assertWarning(x.truncate(0), w, expected)
+        w.reset()
+        self.assertNoWarning(x.truncate(-1), w)
+
+    def test_file_open(self):
+        expected = ("The builtin 'file()'/'open()' function is not supported in 3.x, "
+                       "use the 'io.open()' function instead with the encoding keyword argument")
+        with check_py3k_warnings() as w:
+            with open(__file__) as f:
+                f.read()
+
+    def test_tokenize(self):
+        import tokenize
+        import io
+        expected = "tokenize() changed in 3.x: use generate_tokens() instead."
+        with check_py3k_warnings() as w:
+            tokenize.tokenize(io.BytesIO('1 + 2').readline)
+             
+
+    def test_file(self):
+        expected = ("The builtin 'file()'/'open()' function is not supported in 3.x, "
+                    "use the 'io.open()' function instead with the encoding keyword argument")
+        with check_py3k_warnings() as w:
+            with file(__file__) as f:
+                f.read()
+
     def test_hash_inheritance(self):
         with check_py3k_warnings() as w:
             # With object as the base class
@@ -328,6 +394,12 @@ class TestPy3KWarnings(unittest.TestCase):
         expected = "non-ascii bytes literals not supported in 3.x"
         with check_py3k_warnings((expected, SyntaxWarning)):
             exec "b'\xbd'"
+
+    def test_raise_three_components(self):
+        expected = """the  raise clause with three components is not supported in 3.x; \
+                    use 'raise' with a single object"""
+        with check_py3k_warnings() as w:
+            excType, excValue, excTraceback = sys.exc_info()
 
 
 class TestStdlibRemovals(unittest.TestCase):

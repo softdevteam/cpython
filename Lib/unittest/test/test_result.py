@@ -395,7 +395,8 @@ class TestOutputBuffering(unittest.TestCase):
 
         self.assertIs(real_out, sys.stdout)
         self.assertIs(real_err, sys.stderr)
-
+        
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def testBufferOutputStartTestAddSuccess(self):
         real_out = self._real_out
         real_err = self._real_err
@@ -450,6 +451,7 @@ class TestOutputBuffering(unittest.TestCase):
         result.startTest(self)
         return result
 
+    @unittest.skipIf(sys.py3kwarning, "messaging confuses log")
     def testBufferOutputAddErrorOrFailure(self):
         unittest.result.traceback = MockTraceback
         self.addCleanup(restore_traceback)
