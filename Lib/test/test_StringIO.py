@@ -183,6 +183,10 @@ class TestStringIO(TestGenericStringIO):
         with test_support.check_py3k_warnings(*deprecations):
             "test str" == u"test unicode"
 
+    def test_py3k_join(self):
+        with test_support.check_py3k_warnings(*deprecations):
+            "test str" + u"test unicode"
+
 class TestcStringIO(TestGenericStringIO):
     MODULE = cStringIO
 

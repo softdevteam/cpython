@@ -1020,6 +1020,11 @@ class UnicodeTest(
         # Test whether trailing dot is preserved
         self.assertEqual(u"www.python.org.".encode("idna"), "www.python.org.")
 
+    def test_3k_join(self):
+        with test_support.check_py3k_warnings():
+            u"test unicode" + "test str"
+
+
     def test_codecs_errors(self):
         # Error handling (encoding)
         self.assertRaises(UnicodeError, u'Andr\202 x'.encode, 'ascii')
