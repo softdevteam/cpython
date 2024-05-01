@@ -1209,12 +1209,20 @@ PyObject *PyUnicode_FromEncodedObject(register PyObject *obj,
         return PyObject_Unicode(obj);
     }
 #else
-    if (PyUnicode_Check(obj)) {
-        PyErr_SetString(PyExc_TypeError,
-                        "decoding Unicode is not supported");
-        return NULL;
-    }
 #endif
+    
+    if (PyUnicode_Check(obj)) {
+        if (encoding) {
+            obj->ob_bstate = BSTATE_BYTE;
+            if ((obj->ob_bstate == BSTATE_BYTE) &&
+                PyErr_WarnPy3k(
+                    "'decode()' is not supported on Unicode in 3.x: convert the string to bytes.", 1) < 0) {
+                return NULL;
+            }
+            return NULL;
+        }
+        return PyObject_Unicode(obj);
+    }
 
     /* Coerce object */
     if (PyString_Check(obj)) {
@@ -1304,8 +1312,14 @@ PyObject *PyUnicode_AsDecodedObject(PyObject *unicode,
         goto onError;
     }
 
-    if (PyErr_WarnPy3k("decoding Unicode is not supported in 3.x", 1) < 0)
-        goto onError;
+    if (PyString_CheckExact(unicode)) {
+        unicode->ob_bstate = BSTATE_BYTE;
+    }
+
+    if ((unicode->ob_bstate == BSTATE_BYTE) &&
+        PyErr_WarnPy3k("'decode()' is not supported on Unicode in 3.x: convert the string to bytes.", 1) < 0) {
+        return NULL;
+    }
 
     if (encoding == NULL)
         encoding = PyUnicode_GetDefaultEncoding();

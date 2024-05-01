@@ -105,6 +105,7 @@ whose size is determined when the object is allocated.
  */
 typedef struct _object {
     PyObject_HEAD
+    Py_ssize_t ob_bstate;
 } PyObject;
 
 typedef struct {

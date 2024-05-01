@@ -743,13 +743,13 @@ class UnicodeTest(
             self.assertRaises(
                 TypeError,
                 unicode,
-                u'decoding unicode is not supported',
+                u"'decode()' is not supported on Unicode in 3.x: convert the string to bytes.",
                 'utf-8',
                 'strict'
             )
 
         self.assertEqual(
-            unicode('strings are decoded to unicode', 'utf-8', 'strict'),
+            unicode("'decode()' is not supported on Unicode in 3.x: convert the string to bytes.", 'utf-8', 'strict'),
             u'strings are decoded to unicode'
         )
 
