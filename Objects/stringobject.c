@@ -1646,6 +1646,15 @@ string_join(PyStringObject *self, PyObject *orig)
                  * original sequence can be iterated over
                  * again, so we must pass seq here.
                  */
+                if (!PyString_Check(item) && !item->ob_bstate == NULL) {
+                    if (PyErr_WarnPy3k("Concatenation only works for bytes to bytes in 3.x: convert the string to bytes.", 1) < 0) {
+                        return NULL;
+                    }
+                }
+
+                if (!PyString_Check(orig) && item->ob_bstate == NULL) {
+                    item->ob_bstate = BSTATE_BYTE;
+                }
                 PyObject *result;
                 result = PyUnicode_Join((PyObject *)self, seq);
                 Py_DECREF(seq);
@@ -1700,6 +1709,7 @@ _PyString_Join(PyObject *sep, PyObject *x)
 {
     assert(sep != NULL && PyString_Check(sep));
     assert(x != NULL);
+
     return string_join((PyStringObject *)sep, x);
 }
 
@@ -3719,8 +3729,10 @@ str_subtype_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 static PyObject *
 string_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
+
     PyObject *x = NULL;
     static char *kwlist[] = {"object", 0};
+    PyStringObject *tmp = NULL;
 
     if (type != &PyString_Type)
         return str_subtype_new(type, args, kwds);
@@ -3728,7 +3740,9 @@ string_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
         return NULL;
     if (x == NULL)
         return PyString_FromString("");
-    return PyObject_Str(x);
+    tmp = PyObject_Str(x);
+    tmp->ob_bstate = BSTATE_BYTE;
+    return tmp;
 }
 
 static PyObject *

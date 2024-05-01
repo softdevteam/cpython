@@ -5673,6 +5673,16 @@ PyUnicode_Join(PyObject *separator, PyObject *seq)
     PyObject *item;
     Py_ssize_t i;
 
+    // if (!PyUnicode_Check(seq) && !seq->ob_bstate == NULL) {
+    //     if (PyErr_WarnPy3k("Concatenation only works for unicode to unicode in 3.x: convert the string to unicode.", 1) < 0) {
+    //         return NULL;
+    //     }
+    // }
+
+    // if (!PyUnicode_Check(seq) && seq->ob_bstate == NULL) {
+    //     seq->ob_bstate = BSTATE_UNICODE;
+    // }
+
     fseq = PySequence_Fast(seq, "can only join an iterable");
     if (fseq == NULL) {
         return NULL;
@@ -8859,6 +8869,7 @@ unicode_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
         return NULL;
     if (x == NULL)
         return (PyObject *)_PyUnicode_New(0);
+    // x->ob_bstate = BSTATE_UNICODE;
     if (encoding == NULL && errors == NULL)
         return PyObject_Unicode(x);
     else
