@@ -5673,15 +5673,15 @@ PyUnicode_Join(PyObject *separator, PyObject *seq)
     PyObject *item;
     Py_ssize_t i;
 
-    // if (!PyUnicode_Check(seq) && !seq->ob_bstate == NULL) {
-    //     if (PyErr_WarnPy3k("Concatenation only works for unicode to unicode in 3.x: convert the string to unicode.", 1) < 0) {
-    //         return NULL;
-    //     }
-    // }
+    if (!PyUnicode_Check(seq) && !seq->ob_bstate == NULL) {
+        if (PyErr_WarnPy3k("Concatenation only works for unicode to unicode in 3.x: convert the string to unicode.", 1) < 0) {
+            return NULL;
+        }
+    }
 
-    // if (!PyUnicode_Check(seq) && seq->ob_bstate == NULL) {
-    //     seq->ob_bstate = BSTATE_UNICODE;
-    // }
+    if (!PyUnicode_Check(seq) && seq->ob_bstate == NULL) {
+        seq->ob_bstate = BSTATE_UNICODE;
+    }
 
     fseq = PySequence_Fast(seq, "can only join an iterable");
     if (fseq == NULL) {
@@ -5704,7 +5704,16 @@ PyUnicode_Join(PyObject *separator, PyObject *seq)
     /* If singleton sequence with an exact Unicode, return that. */
     if (seqlen == 1) {
         item = PySequence_Fast_GET_ITEM(fseq, 0);
-        if (PyUnicode_CheckExact(item)) {
+        if (!PyUnicode_CheckExact(item) && !item->ob_bstate == NULL) {
+            if (PyErr_WarnPy3k("Concatenation only works for unicode to unicode in 3.x: convert the string to unicode.", 1) < 0) {
+                return NULL;
+            }
+        }
+
+        if (!PyUnicode_CheckExact(item) && item->ob_bstate == NULL) {
+            item->ob_bstate = BSTATE_UNICODE;
+        }
+         if (PyUnicode_CheckExact(item)) {
             Py_INCREF(item);
             res = (PyUnicodeObject *)item;
             goto Done;
@@ -8861,6 +8870,7 @@ unicode_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     static char *kwlist[] = {"string", "encoding", "errors", 0};
     char *encoding = NULL;
     char *errors = NULL;
+    PyUnicodeObject *tmp = NULL;
 
     if (type != &PyUnicode_Type)
         return unicode_subtype_new(type, args, kwds);
@@ -8869,11 +8879,16 @@ unicode_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
         return NULL;
     if (x == NULL)
         return (PyObject *)_PyUnicode_New(0);
-    // x->ob_bstate = BSTATE_UNICODE;
-    if (encoding == NULL && errors == NULL)
-        return PyObject_Unicode(x);
-    else
-        return PyUnicode_FromEncodedObject(x, encoding, errors);
+    if (encoding == NULL && errors == NULL) {
+        tmp = PyObject_Unicode(x);
+        tmp->ob_bstate = BSTATE_UNICODE;
+        return tmp;
+    }
+    else {
+        tmp = PyUnicode_FromEncodedObject(x, encoding, errors);
+        tmp->ob_bstate = BSTATE_UNICODE;
+        return tmp;
+    }
 }
 
 static PyObject *
