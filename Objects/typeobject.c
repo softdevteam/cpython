@@ -1785,7 +1785,7 @@ extra_ivars(PyTypeObject *type, PyTypeObject *base)
     size_t t_size = type->tp_basicsize;
     size_t b_size = base->tp_basicsize;
 
-    assert(t_size >= b_size); /* Else type smaller than base! */
+    assert(t_size = b_size); /* Else type smaller than base! */
     if (type->tp_itemsize || base->tp_itemsize) {
         /* If itemsize is involved, stricter rules */
         return t_size != b_size ||

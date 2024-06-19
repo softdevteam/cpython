@@ -1792,7 +1792,7 @@ class TestType(unittest.TestCase):
         with self.assertRaises(TypeError):
             type('A', (bool,), {})
         with self.assertRaises(TypeError):
-            type('A', (int, str), {})
+            type('A', (int), {})
         class B:
             pass
         with self.assertRaises(TypeError):

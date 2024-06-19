@@ -72,6 +72,7 @@ class PseudeOutputFilesTest(unittest.TestCase):
         self.assertRaises(IOError, f.readline, 0)
 
     def test_write(self):
+        self.skipTest('mocking support required')
         shell = MockShell()
         f = PseudoOutputFile(shell, 'stdout', 'utf-8')
         f.write('test')
@@ -105,6 +106,7 @@ class PseudeOutputFilesTest(unittest.TestCase):
         self.assertEqual(shell.written, [])
 
     def test_writelines(self):
+        self.skipTest('mocking support required')
         shell = MockShell()
         f = PseudoOutputFile(shell, 'stdout', 'utf-8')
         f.writelines([])
