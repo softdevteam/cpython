@@ -3728,6 +3728,11 @@ string_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
         return NULL;
     if (x == NULL)
         return PyString_FromString("");
+    if (PyBytes_CheckExact(v)) {
+        (PyStringObject *)x->ob_bstate = BSTATE_NOT_SURE;
+    } else {
+        (PyBytesObject *)x->ob_bstate = BSTATE_BYTE;
+    }
     return PyObject_Str(x);
 }
 
