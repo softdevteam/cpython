@@ -466,7 +466,6 @@ PyAPI_FUNC(PyObject *) PyObject_Str(PyObject *);
 PyAPI_FUNC(PyObject *) PyObject_Unicode(PyObject *);
 #endif
 PyAPI_DATA(Py_ssize_t) PyObject_GetBState(PyObject *);
-PyAPI_FUNC() PyObject_Unicode(PyObject *);
 PyAPI_FUNC(int) PyObject_Compare(PyObject *, PyObject *);
 PyAPI_FUNC(PyObject *) PyObject_RichCompare(PyObject *, PyObject *, int);
 PyAPI_FUNC(int) PyObject_RichCompareBool(PyObject *, PyObject *, int);

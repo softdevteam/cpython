@@ -8859,7 +8859,7 @@ unicode_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
         return NULL;
     if (x == NULL)
         return (PyObject *)_PyUnicode_New(0);
-    (PyUnicodeObject *)x->ob_bstate = BSTATE_UNICODE;
+    ((PyUnicodeObject *)x)->ob_bstate = BSTATE_UNICODE;
     if (encoding == NULL && errors == NULL)
         return PyObject_Unicode(x);
     else

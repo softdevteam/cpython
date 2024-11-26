@@ -471,7 +471,7 @@ PyObject_Str(PyObject *v)
     return res;
 }
 
-PyObject *
+Py_ssize_t
 PyObject_GetBState(PyObject *v)
 {
     PyUnicodeObject *uni;
@@ -480,10 +480,10 @@ PyObject_GetBState(PyObject *v)
     Py_ssize_t bbstate;
 
     if (v == NULL) {
-        return 0
+        return 0;
     }
     else {
-        if (!PyUnicode_CheckExact(v) || !PyByte_CheckExact(v)) {
+        if (!PyUnicode_CheckExact(v) || !PyBytes_CheckExact(v)) {
             return -1;
         }
         if (PyUnicode_CheckExact(v)) {
@@ -497,6 +497,8 @@ PyObject_GetBState(PyObject *v)
             Py_DECREF(uni);
             return bbstate;
         }
+        // Alias, what do we do?
+        // Lets revisit this discussion we might have had a year back
         if (PyString_CheckExact(v)) {
             str = (PyStringObject *) v;
             if (str == NULL)

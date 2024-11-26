@@ -1592,6 +1592,9 @@ string_rsplit(PyStringObject *self, PyObject *args)
 }
 
 
+// Example we are testing
+// m =  "x" + b"y"
+
 PyDoc_STRVAR(join__doc__,
 "S.join(iterable) -> string\n\
 \n\
@@ -1692,6 +1695,26 @@ string_join(PyStringObject *self, PyObject *orig)
     }
 
     Py_DECREF(seq);
+    // Should have been set before
+    assert(PyObject_GetBState(self) == 0);
+    // A bit wierd, no??
+    if (((PyStringObject *)item)->ob_bstate != BSTATE_NOT_SURE) {
+        if (PyBytes_CheckExact(item)) {
+            if (((PyBytesObject *)item)->ob_bstate == NULL) {
+                ((PyBytesObject *)item)->ob_bstate = BSTATE_BYTE;
+            }
+            self->ob_bstate = PyObject_GetBState(item);
+            ((PyBytesObject *)res)->ob_bstate = BSTATE_BYTE;
+        }
+        if (PyUnicode_Check(item)) {
+            if (((PyUnicodeObject *)item)->ob_bstate == NULL) {
+                ((PyUnicodeObject *)item)->ob_bstate = BSTATE_BYTE;
+            }
+            self->ob_bstate = PyObject_GetBState(item);
+            ((PyUnicodeObject *)res)->ob_bstate = BSTATE_BYTE;
+        }
+        
+    }
     return res;
 }
 
@@ -3728,10 +3751,11 @@ string_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
         return NULL;
     if (x == NULL)
         return PyString_FromString("");
-    if (PyBytes_CheckExact(v)) {
-        (PyStringObject *)x->ob_bstate = BSTATE_NOT_SURE;
-    } else {
-        (PyBytesObject *)x->ob_bstate = BSTATE_BYTE;
+    if (PyString_CheckExact(((PyStringObject *)x))) {
+        ((PyStringObject *)x)->ob_bstate = BSTATE_NOT_SURE; 
+    } 
+    if (PyBytes_CheckExact(((PyBytesObject *)x))) {
+        ((PyBytesObject *)x)->ob_bstate = BSTATE_BYTE; 
     }
     return PyObject_Str(x);
 }
