@@ -2717,6 +2717,7 @@ static PyMethodDef TestMethods[] = {
     {"raise_exception",         raise_exception,                 METH_VARARGS},
     {"set_errno",               set_errno,                       METH_VARARGS},
     {"test_config",             (PyCFunction)test_config,        METH_NOARGS},
+    {"test_join_api",           (PyCFunction)test_join_api,      METH_NOARGS},
 #if defined(Py_USING_UNICODE) && !defined(Py_BUILD_CORE)
     {"test_datetime_capi",  test_datetime_capi,              METH_NOARGS},
 #endif
