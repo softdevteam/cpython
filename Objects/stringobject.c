@@ -1695,25 +1695,13 @@ string_join(PyStringObject *self, PyObject *orig)
     }
 
     Py_DECREF(seq);
-    // Should have been set before
-    assert(PyObject_GetBState(self) == 0);
-    // A bit wierd, no??
-    if (((PyStringObject *)item)->ob_bstate != BSTATE_NOT_SURE) {
-        if (PyBytes_CheckExact(item)) {
-            if (((PyBytesObject *)item)->ob_bstate == NULL) {
-                ((PyBytesObject *)item)->ob_bstate = BSTATE_BYTE;
-            }
-            self->ob_bstate = PyObject_GetBState(item);
-            ((PyBytesObject *)res)->ob_bstate = BSTATE_BYTE;
-        }
-        if (PyUnicode_Check(item)) {
-            if (((PyUnicodeObject *)item)->ob_bstate == NULL) {
-                ((PyUnicodeObject *)item)->ob_bstate = BSTATE_BYTE;
-            }
-            self->ob_bstate = PyObject_GetBState(item);
-            ((PyUnicodeObject *)res)->ob_bstate = BSTATE_BYTE;
-        }
-        
+    if (PyUnicode_Check(item)) {
+        ((PyUnicodeObject *)item)->ob_bstate = BSTATE_UNICODE;
+        self->ob_bstate = PyObject_GetBState(item);
+        ((PyUnicodeObject *)res)->ob_bstate = BSTATE_UNICODE;
+
+        if (PyErr_WarnPy3k("joining a String and a Unicode is not supported in 3.x", 1) < 0)
+            return NULL;
     }
     return res;
 }

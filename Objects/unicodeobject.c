@@ -374,6 +374,7 @@ PyUnicodeObject *_PyUnicode_New(Py_ssize_t length)
     unicode->length = length;
     unicode->hash = -1;
     unicode->defenc = NULL;
+    unicode->ob_bstate = BSTATE_UNICODE;
     return unicode;
 
   onError:
@@ -5739,6 +5740,13 @@ PyUnicode_Join(PyObject *separator, PyObject *seq)
                          i, Py_TYPE(item)->tp_name);
             goto onError;
         }
+        if (PyBytes_CheckExact(item)) {
+            ((PyBytesObject *)item)->ob_bstate = BSTATE_BYTE;
+            ((PyBytesObject *)sep)->ob_bstate = PyObject_GetBState(item);
+
+            if (PyErr_WarnPy3k("joining Unicode and a Byte is not supported in 3.x", 1) < 0)
+                goto onError;
+        }
         item = PyUnicode_FromObject(item);
         if (item == NULL)
             goto onError;
@@ -5791,6 +5799,7 @@ PyUnicode_Join(PyObject *separator, PyObject *seq)
   Done:
     Py_XDECREF(internal_separator);
     Py_DECREF(fseq);
+    res->ob_bstate = BSTATE_BYTE;
     return (PyObject *)res;
 
   Overflow:

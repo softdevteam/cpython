@@ -497,8 +497,6 @@ PyObject_GetBState(PyObject *v)
             Py_DECREF(uni);
             return bbstate;
         }
-        // Alias, what do we do?
-        // Lets revisit this discussion we might have had a year back
         if (PyString_CheckExact(v)) {
             str = (PyStringObject *) v;
             if (str == NULL)
@@ -603,6 +601,7 @@ PyObject_Unicode(PyObject *v)
         Py_DECREF(res);
         res = str;
     }
+    ((PyUnicodeObject *)res)->ob_bstate = BSTATE_UNICODE;
     return res;
 }
 #endif
