@@ -1592,6 +1592,9 @@ string_rsplit(PyStringObject *self, PyObject *args)
 }
 
 
+// Example we are testing
+// m =  "x" + b"y"
+
 PyDoc_STRVAR(join__doc__,
 "S.join(iterable) -> string\n\
 \n\
@@ -1692,6 +1695,14 @@ string_join(PyStringObject *self, PyObject *orig)
     }
 
     Py_DECREF(seq);
+    if (PyUnicode_Check(item)) {
+        ((PyUnicodeObject *)item)->ob_bstate = BSTATE_UNICODE;
+        self->ob_bstate = PyObject_GetBState(item);
+        ((PyUnicodeObject *)res)->ob_bstate = BSTATE_UNICODE;
+
+        if (PyErr_WarnPy3k("joining a String and a Unicode is not supported in 3.x", 1) < 0)
+            return NULL;
+    }
     return res;
 }
 
@@ -3728,6 +3739,12 @@ string_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
         return NULL;
     if (x == NULL)
         return PyString_FromString("");
+    if (PyString_CheckExact(((PyStringObject *)x))) {
+        ((PyStringObject *)x)->ob_bstate = BSTATE_NOT_SURE; 
+    } 
+    if (PyBytes_CheckExact(((PyBytesObject *)x))) {
+        ((PyBytesObject *)x)->ob_bstate = BSTATE_BYTE; 
+    }
     return PyObject_Str(x);
 }
 

@@ -81,6 +81,33 @@ test_config(PyObject *self)
 }
 
 static PyObject*
+test_join_api(PyObject *self)
+{
+    PyObject *s = PyObject_Str(NULL);
+    PyObject *pieces = PyObject_Unicode(NULL);
+
+    PyObject *result = _PyString_Join(s, pieces);
+    if (((PyUnicodeObject *)result)->ob_bstate != BSTATE_UNICODE) {
+            PyErr_SetString(TestError,
+                            "test_join_api:string bstate update failed");
+            Py_DECREF(result);
+            return (PyObject*)NULL;
+    }
+
+    result = PyUnicode_Join(pieces, s);
+    if (((PyStringObject *)result)->ob_bstate != BSTATE_BYTE) {
+            PyErr_SetString(TestError,
+                            "test_join_api:unicode bstate update failed");
+            Py_DECREF(result);
+            return (PyObject*)NULL;
+    }
+
+    Py_DECREF(result);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject*
 test_list_api(PyObject *self)
 {
     PyObject* list;
@@ -2690,6 +2717,7 @@ static PyMethodDef TestMethods[] = {
     {"raise_exception",         raise_exception,                 METH_VARARGS},
     {"set_errno",               set_errno,                       METH_VARARGS},
     {"test_config",             (PyCFunction)test_config,        METH_NOARGS},
+    {"test_join_api",           (PyCFunction)test_join_api,      METH_NOARGS},
 #if defined(Py_USING_UNICODE) && !defined(Py_BUILD_CORE)
     {"test_datetime_capi",  test_datetime_capi,              METH_NOARGS},
 #endif

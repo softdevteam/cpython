@@ -471,6 +471,57 @@ PyObject_Str(PyObject *v)
     return res;
 }
 
+Py_ssize_t
+PyObject_GetBState(PyObject *v)
+{
+    PyUnicodeObject *uni;
+    PyStringObject *str;
+    PyBytesObject *byt;
+    Py_ssize_t bbstate;
+
+    if (v == NULL) {
+        return 0;
+    }
+    else {
+        if (!PyUnicode_CheckExact(v) || !PyBytes_CheckExact(v)) {
+            return -1;
+        }
+        if (PyUnicode_CheckExact(v)) {
+            uni = (PyUnicodeObject *) PyUnicode_FromObject(v);
+            if (uni == NULL)
+                return 0;
+            bbstate = uni->ob_bstate;
+            if (bbstate == NULL)
+                Py_XDECREF(uni);
+                return 0;
+            Py_DECREF(uni);
+            return bbstate;
+        }
+        if (PyString_CheckExact(v)) {
+            str = (PyStringObject *) v;
+            if (str == NULL)
+                return 0;
+            bbstate = str->ob_bstate;
+            if (bbstate == NULL)
+                Py_XDECREF(str);
+                return 0;
+            Py_DECREF(str);
+            return bbstate;
+        }
+        if (PyBytes_CheckExact(v)) {
+            byt = (PyBytesObject *) v;
+            if (byt == NULL)
+                return 0;
+            bbstate = byt->ob_bstate;
+            if (bbstate == NULL)
+                Py_XDECREF(byt);
+                return 0;
+            Py_DECREF(byt);
+            return bbstate;
+        }
+    }
+}
+
 #ifdef Py_USING_UNICODE
 PyObject *
 PyObject_Unicode(PyObject *v)
@@ -550,6 +601,7 @@ PyObject_Unicode(PyObject *v)
         Py_DECREF(res);
         res = str;
     }
+    ((PyUnicodeObject *)res)->ob_bstate = BSTATE_UNICODE;
     return res;
 }
 #endif

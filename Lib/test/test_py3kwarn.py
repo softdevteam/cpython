@@ -217,6 +217,13 @@ class TestPy3KWarnings(unittest.TestCase):
         with check_py3k_warnings():
             "{0}-{1}: {2}".decode()
 
+    def test_str_join(self):
+        with check_py3k_warnings():
+            a = "x" + u"y"
+            a = b"x" + u"y"
+            a = u"x" + b"y"
+            a = u"x" + "y"
+
     def test_string_parsing(self):
         with check_py3k_warnings():
             b"{0}-{1}: {2}"._formatter_parser()
